@@ -1,4 +1,4 @@
-# MedLex.github.io
+# MedLex
 
 MIT 라이선스 (MIT License)
 저작권 (c) 2026 linuse765
