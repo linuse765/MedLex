@@ -3,12 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>MedLex V5.25</title>
+<title>MedLex V-index</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap');
 
 /* ════════════════════════════════════════
-   CSS 변수 정의 — 라이트 / 다크 테마
+   CSS 변수 정의 — 라이트 / 다크 테마 / 이거 보고 있으면 너도 색깔 마음대로 바꿀 수 있음 ㅎㅎ
+  생각보다 변수 많아 보이지만, 색상 계열별로 2~3개씩 있고, 그 외에 radius, shadow, transition 등도 포함되어 있어서 그렇지 실제로는 꽤 간단한 편입니다.
+  색상 변수: bg, surface, border, text, accent, danger, gold, purple 등 주요 색상 계열별로 기본 색상과 연한 색상, 그리고 텍스트/배경에 쓰이는 보조 색상으로 구성되어 있습니다.
+  자세한 색상은 라이트 테마 기준으로 메인 강조색(--accent): #2d6a4f (짙은 초록색), 보조 강조색(--accent2): #52b788 (밝은 연두/초록색), 강조 배경색(--accent-light): #d8f3dc (아주 연한 초록색)
+  다크테마 기준으로는 메인 강조색(--accent): #52b788, 보조 강조색(--accent2): #74c69d 입니다. (다크테마에서는 메인/보조 강조색이 라이트테마의 보조/주 강조색과 색상은 같지만 명도 차이를 줘서 구분감을 주었습니다.)
+  그리고 색조합에 대해 공 많이 들였으니 이거 봤으면 만났을때 칭찬 좀 해주세요.
 ════════════════════════════════════════ */
 :root {
   --bg: #f5f3ef;
@@ -446,7 +451,7 @@ body {
 
 
 /* ══════════════════════════════════════
-   통계 화면 V4.1
+   통계 화면
 ══════════════════════════════════════ */
 .stats-screen { padding: 20px 16px; padding-bottom: 100px; }
 .stats-title { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--text); margin-bottom: 4px; }
@@ -540,7 +545,7 @@ body {
 .h-dot.e  { background: var(--border); }
 
 /* ══════════════════════════════════════
-   분석 화면 V4.1
+   분석 화면
 ══════════════════════════════════════ */
 .analyze-screen { padding: 20px 16px; padding-bottom: 100px; }
 
@@ -1254,7 +1259,7 @@ body {
 
   <!-- ── 헤더 ── -->
   <header class="header">
-    <div class="header-logo">MedLex <span>V5.25</span></div>
+    <div class="header-logo">MedLex <span>V-index</span></div>
     <!-- UX-12: 🗒️ 로그/기록 버튼 추가 (순서: 🗒️ → 💾 → ⚙️) -->
     <button class="icon-btn" id="logBtn" title="패치노트 및 피드백" style="position:relative">
       🗒️
@@ -1522,7 +1527,7 @@ body {
   </div>
 
   <!-- ══════════════════════════════════════
-       통계 화면 (V4.1 — 쌓인 기록 대시보드)
+       통계 화면 (V4.0 때 대폭 리뉴얼 했어요~~)
   ══════════════════════════════════════ -->
   <div class="screen" id="statsScreen">
     <div class="stats-screen">
@@ -1594,7 +1599,7 @@ body {
   </div>
 
   <!-- ══════════════════════════════════════
-       분석 화면 (V4.1 신설)
+       분석 화면 (V4.1 때 신설)
   ══════════════════════════════════════ -->
   <div class="screen" id="analyzeScreen">
     <div class="analyze-screen">
@@ -2024,7 +2029,7 @@ body {
         <div class="log-tab-content active" id="ltab-patch">
           <div class="patch-version-block">
             <div class="patch-version-header">
-              <span class="patch-version-num">V5.25</span>
+              <span class="patch-version-num">V5</span>
               <span class="patch-version-date">2026</span>
               <span class="patch-version-badge">최신</span>
             </div>
@@ -2049,9 +2054,13 @@ body {
             <div class="patch-item"><span class="patch-item-icon">✨</span><div><b>[UX-10]</b> 입력창 포커스 중 모든 단축키 차단 — 오작동 방지</div></div>
             <div class="patch-item"><span class="patch-item-icon">✨</span><div><b>[UX-11]</b> 마인드맵 확대/이동 가능 — 드래그로 이동, 버튼으로 확대/축소</div></div>
             <div class="patch-item"><span class="patch-item-icon">✨</span><div><b>[UX-12]</b> 헤더에 🗒️ 로그/기록 버튼 추가 — 패치노트 및 피드백 탭</div></div>
+            <div class="patch-item"><span class="patch-item-icon">✨</span><div><b>[UX-13]</b> 폴더 대량 지정 기능 추가</div></div>
             <div class="patch-item"><span class="patch-item-icon">🔧</span><div><b>[CODE-01]</b> 홈 화면 필터 탭 레이아웃 오버플로우 처리 개선</div></div>
             <div class="patch-item"><span class="patch-item-icon">🔧</span><div><b>[CODE-02]</b> 분석 탭 단축키 '4' 기본값으로 등록</div></div>
-            <div class="patch-item"><span class="patch-item-icon">🔧</span><div><b>[CODE-03]</b> 내보내기 파일명에 날짜 포함 (medlex_backup_YYYYMMDD.json)</div></div>
+            <div class="patch-item"><span class="patch-item-icon">🔧</span><div><b>[CODE-03]</b> 폴더 대량 지정 기능 추가</div></div>
+            <div class="patch-item"><span class="patch-item-icon">🪳</span><div><b>[발견된 버그-01]</b> 분석탭 내 사전 기능 / 내장된 접두, 접미사를 제대로 인식하지 못하는 문제</div></div>
+            <div class="patch-item"><span class="patch-item-icon">🪳</span><div><b>[발견된 버그-02]</b> 단어 수정 후 새로고침해야 변경 사항이 노출되는 문제</div></div>
+            <div class="patch-item"><span class="patch-item-icon">⬆️</span><div><b>[개선예정 사항]</b> 폴더 대량 지정 시 출력되는 단어들에 대한 정렬 및 필터링 기능 추가</div></div>
           </div>
         </div>
         <!-- 피드백 탭 -->
@@ -2070,7 +2079,7 @@ body {
 
 <script>
 // ═══════════════════════════════════════════════════════════════
-// ── 의학 접사 사전 V4.2 (Medical Affix Dictionary)
+// ── 의학 접사 사전 (Medical Affix Dictionary)
 //
 //  [설계 원칙]
 //  1. 접두사  : 반드시 word 앞 + 뒤에 의학 어근/접미사가 따라와야 인정
@@ -2080,6 +2089,9 @@ body {
 //  3. 접미사  : 반드시 앞에 의학 어근이 있어야 인정
 //              단독으로 접미사만 붙은 일반 영단어(scar, gratis…) 오탐 방지
 //  4. 사용자  : localStorage에서 커스텀 접사를 병합 (userAffixes 참조)
+//
+// 이걸 읽고 계시면 내장 접사 사전을 마음대로 수정하실 수 있을 겁니다.
+// 상당히 멋있으시네요
 // ═══════════════════════════════════════════════════════════════
 const MEDICAL_AFFIXES = {
   // ── 접두사 ──────────────────────────────────────────────────
@@ -2455,7 +2467,7 @@ function getUserAffixesForExport() { return userAffixes; }
 const affixCache = new Map();
 
 // ═══════════════════════════════════════════════════════════════
-// ── 접사 분석 엔진 V4.2 — 정밀 경계 검증
+// ── 접사 분석 엔진
 //  선언 순서: SORTED_AFFIXES → SORTED_USER_AFFIXES → affixCache → 엔진
 // ═══════════════════════════════════════════════════════════════
 
@@ -4312,7 +4324,7 @@ function endQuiz() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// ── 통계 렌더링 V4.1
+// ── 통계 렌더링
 // ═══════════════════════════════════════════════════════════════
 function renderStats() {
   // ① 핵심 수치
@@ -4375,6 +4387,8 @@ function calcStreak() {
 }
 
 // 꺾은선 차트 (개선: 툴팁 텍스트 + 격자선)
+// ???? 꺾은선 차트 기능도 있었어?
+// 아카이브 보니 1.0 버전부터 있었네... 근데 너무 단순해서 개선해봤어요(왜 그걸 기억 못하지)
 function renderKnowledgeChart() {
   const el = document.getElementById('knowledgeChart');
   if (!el) return;
@@ -4478,7 +4492,7 @@ function renderWeakList() {
 
 
 // ═══════════════════════════════════════════════════════════════
-// ── 분석 탭 V4.1
+// ── 분석 탭
 // ═══════════════════════════════════════════════════════════════
 
 // 카테고리별 아이콘/색상 매핑
@@ -4664,6 +4678,7 @@ function drawMindmapSvg(rootAffix, data) {
   const n = ws.length;
 
   // UX-11: 노드 수에 따라 넉넉한 캔버스 크기 확보
+  // 솔직히 황금비율인듯 ㅋㅋ
   const VW = 520, VH = n <= 4 ? 280 : n <= 8 ? 340 : n <= 14 ? 400 : 460;
   const CX = VW / 2, CY = VH / 2 - 20;
   const R_INNER = 58, R_OUTER = n <= 5 ? 160 : n <= 10 ? 150 : n <= 16 ? 138 : 125;
@@ -4703,6 +4718,7 @@ function drawMindmapSvg(rootAffix, data) {
 }
 
 // UX-11: 마인드맵 pan/zoom 인터랙션
+// 사실 마인드맵 전용이긴 한데, 추후 SVG 인터랙션이 필요한 다른 곳에도 재활용 가능하도록 약간 일반화해서 구현
 let _mmTransform = { x: 0, y: 0, scale: 1 };
 
 function _applyMmTransform(svg) {
@@ -4767,7 +4783,7 @@ function _initMindmapPanZoom(wrap, svg) {
   document.getElementById('mmZoomReset').onclick = () => { _mmTransform = { x:0, y:0, scale:1 }; _applyMmTransform(svg); };
 }
 
-// ── 사전 탭 렌더링 (V4.2) ─────────────────────────────────────
+// ── 사전 탭 렌더링 ─────────────────────────────────────
 let activeUserAffixTab = 'roots';
 
 function renderDictTab() {
@@ -4885,6 +4901,7 @@ function initAnalyzeTabs() {
 // ── 내보내기 / 가져오기
 // ═══════════════════════════════════════════════════════════════
 // CODE-03: 내보내기 파일명에 날짜 포함 (medlex_backup_YYYYMMDD.json)
+// 구현은 했는데 왜 작동이 안되는거지 ㅠㅠ
 function exportData() {
   const data = buildExportData();
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -5395,6 +5412,8 @@ document.getElementById('logOverlay').addEventListener('click', e => {
 });
 
 // ── 피드백 저장/삭제/렌더링 ──
+//
+//사실 요즘 누가 피드백 씀? 싶긴 한데... 일단 구현은 해뒀습니다. UX-12: 피드백 기록 기능 추가
 function loadFeedbacks() {
   try { return JSON.parse(localStorage.getItem('medlex_logs') || '[]'); } catch { return []; }
 }
@@ -5447,7 +5466,7 @@ renderWordList();
 renderFolderSelects();
 updateShortcutBadges();
 initAnalyzeTabs();
-initLogBadge(); // UX-12: V5.0 첫 실행 시 패치노트 뱃지 표시
+initLogBadge(); // UX-12: 첫 실행 시 패치노트 뱃지 표시
 
 // 페이지 종료 전 디바운스 타이머 즉시 flush
 window.addEventListener('beforeunload', () => saveAll());
@@ -5455,6 +5474,12 @@ window.addEventListener('beforeunload', () => saveAll());
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'hidden') saveAll();
 });
+
+// ai 95% 그리고 나의 힘 나머지 5%로 이 프로젝트를 완성했다... ai 님 굉장해~
+// 주석도 친절히 달아주시고 코드도 깔끔하게 리팩토링해주시고... 정말 감사합니다! 🙏✨
+// 사실 ai가 다 해서 남 앞에서 내가 만들었다고 하기에는 조금 죄책감이 들긴 하는데... 그래도 내가 기획하고 구조 잡고 ai가 코딩한 거니까 어느 정도는 내 공도 있다고 생각하기로 했습니다
+// 영화 감독도 촬영기사, 편집기사, 음향기사 등 수많은 스태프들과 협업해서 영화를 만들잖아요?
+
 </script>
 </body>
 </html>
