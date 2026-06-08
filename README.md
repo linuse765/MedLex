@@ -1,5 +1,3 @@
-# MedLex
-
 # MedLex V-index
 
 의학 용어(Medical Lexicon)의 접두사(Prefix)와 접미사(Suffix)를 체계적으로 색인, 검색 및 관리할 수 있도록 설계된 데이터 분석 및 학습용 단일 파일 웹 애플리케이션입니다.
