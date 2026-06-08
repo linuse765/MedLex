@@ -7,9 +7,9 @@
 
 ## 바로 시작하기
 
-별도 설치 없이 아래 링크에서 바로 사용할 수 있습니다.
+별도 설치 없이 아래 링크에서 바로 사용할 수 있습니다
 
-https://linuse765.github.io/MedLex.github.io/
+https://linuse765.github.io/MedLex/
 
 1. 상단 단어장 탭에서 단어와 뜻을 추가합니다.
 2. 폴더를 만들어 계통별로 분류합니다.
