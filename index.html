@@ -1815,7 +1815,10 @@ body {
       <div class="modal-title" id="modalTitle">단어 추가</div>
       <div class="form-group">
         <label class="form-label">영어 (의학용어) *</label>
-        <input class="form-input" id="inputTerm" placeholder="예: cardiomegaly" autocomplete="off">
+        <!-- BUGFIX: 길이 제한 없어 극단적으로 긴 입력 시 카드 레이아웃 붕괴 및
+             localStorage 용량 압박 가능성 있었음. 가장 긴 의학용어 부류도
+             넉넉히 수용하도록 100자로 설정 -->
+        <input class="form-input" id="inputTerm" placeholder="예: cardiomegaly" autocomplete="off" maxlength="100">
       </div>
       <!-- 접사 자동 분석 패널 -->
       <div class="affix-panel" id="affixPanel">
@@ -1826,11 +1829,11 @@ body {
       </div>
       <div class="form-group">
         <label class="form-label">뜻 (한글) *</label>
-        <input class="form-input" id="inputMeaning" placeholder="예: 심장비대">
+        <input class="form-input" id="inputMeaning" placeholder="예: 심장비대" maxlength="200">
       </div>
       <div class="form-group">
         <label class="form-label">발음 (선택)</label>
-        <input class="form-input" id="inputPron" placeholder="예: 카디오메갈리">
+        <input class="form-input" id="inputPron" placeholder="예: 카디오메갈리" maxlength="150">
       </div>
       <div class="form-group">
         <label class="form-label">📁 폴더</label>
@@ -1853,7 +1856,7 @@ body {
       <div class="modal-title">📁 폴더 관리</div>
       <div class="folder-list" id="folderList"></div>
       <div class="folder-add-form">
-        <input type="text" id="newFolderInput" placeholder="새 폴더 이름 입력...">
+        <input type="text" id="newFolderInput" placeholder="새 폴더 이름 입력..." maxlength="40">
         <button class="folder-add-btn" id="addFolderBtn">추가</button>
       </div>
       <div style="height:12px"></div>
@@ -2509,8 +2512,13 @@ function saveUserAffixes() {
   rebuildSortedUserAffixes();
   affixCache.clear();
   _lastRenderKey = '';
-  // 접사 추가/삭제 후 카드 목록 즉시 갱신
-  if (typeof renderWordList === 'function') renderWordList();
+  // BUGFIX(성능): 접사를 추가/삭제할 때마다 무조건 renderWordList()를 호출하면
+  // 단어가 많을 때 화면에 보이지도 않는 홈 화면 카드 목록을 매번 다시 그리게 됨
+  // (사전 관리는 분석 탭에서 이뤄지는 게 보통이라 실제로는 자주 낭비됨).
+  // 홈 화면이 실제로 보이고 있을 때만 즉시 갱신하고, 아니면 _lastRenderKey를
+  // 비워둔 채로 두어 다음에 홈 화면으로 돌아갈 때 자연히 새로 그려지게 함.
+  const homeVisible = document.getElementById('homeScreen')?.classList.contains('active');
+  if (homeVisible && typeof renderWordList === 'function') renderWordList();
 }
 
 function rebuildSortedUserAffixes() {
@@ -2718,6 +2726,18 @@ function initWordAlgo(w) {
   return w;
 }
 
+// BUGFIX: 가져오기/파일 연결 시 데이터 항목 검증.
+// 배열인지만 확인하고 항목 내용은 검증하지 않으면, 손상되었거나 다른 스키마의
+// JSON을 가져올 때 term/meaning이 없는 항목이 섞여 들어가 이후 렌더링 중
+// (w.term.toLowerCase() 등) 예외가 날 수 있었음. id/term/meaning이 모두
+// 문자열인 항목만 통과시킴.
+function isValidImportedWord(w) {
+  return !!(w && typeof w === 'object'
+    && typeof w.id === 'string' && w.id.length > 0
+    && typeof w.term === 'string' && w.term.trim().length > 0
+    && typeof w.meaning === 'string' && w.meaning.trim().length > 0);
+}
+
 // 기억 유지 확률 R = e^(-t/h)
 function getRetention(w) {
   if (!w.lastLearned) return 0;
@@ -2841,9 +2861,13 @@ async function connectJsonFile() {
     const data = JSON.parse(text);
 
     if (Array.isArray(data.words)) {
-      showConfirm(`파일에서 ${data.words.length}개의 단어를 발견했습니다. 불러올까요?\n(기존 데이터는 병합됩니다)`, () => {
+      // BUGFIX: 유효하지 않은 항목(term/meaning 누락 등)은 걸러내고 개수 안내
+      const validWords = data.words.filter(isValidImportedWord);
+      const skipped = data.words.length - validWords.length;
+      const skipNote = skipped > 0 ? `\n(형식이 올바르지 않은 ${skipped}개는 제외됩니다)` : '';
+      showConfirm(`파일에서 ${validWords.length}개의 단어를 발견했습니다. 불러올까요?\n(기존 데이터는 병합됩니다)${skipNote}`, () => {
         const existingIds = new Set(words.map(w => w.id));
-        const newWords = data.words.filter(w => !existingIds.has(w.id)).map(initWordAlgo);
+        const newWords = validWords.filter(w => !existingIds.has(w.id)).map(initWordAlgo);
         words = [...words, ...newWords];
         if (data.stats) stats = { ...stats, ...data.stats };
         if (Array.isArray(data.folders)) folders = [...new Set([...folders, ...data.folders])];
@@ -3069,9 +3093,12 @@ function load() {
   const sb = localStorage.getItem('medlex_showbadges');
   const sortVal = localStorage.getItem('medlex_sort');
   const qc = localStorage.getItem('medlex_quizConfig'); // BUG-G: quizConfig 복원
-  if (w) { words = JSON.parse(w); words.forEach(initWordAlgo); }
-  if (s) stats = JSON.parse(s);
-  if (f) { folders = JSON.parse(f); } else { folders = []; }
+  // BUGFIX: JSON.parse가 손상된 데이터에서 예외를 던지면 이후 초기화 로직
+  // (loadShortcuts, updateFileStatusUI 등)이 전혀 실행되지 않아 앱이 빈 화면으로
+  // 멈출 수 있었음. 각 항목을 개별적으로 방어해 하나가 손상돼도 나머지는 정상 로드되게 함.
+  if (w) { try { words = JSON.parse(w); words.forEach(initWordAlgo); } catch { words = []; } }
+  if (s) { try { stats = JSON.parse(s); } catch { /* 기본 stats 유지 */ } }
+  if (f) { try { folders = JSON.parse(f); } catch { folders = []; } } else { folders = []; }
   if (t) { theme = t; applyTheme(); }
   if (l) { layoutMode = l; applyLayout(false); }
   if (sb) { showShortcutBadges = sb === '1'; applyShortcutBadgeToggle(); }
@@ -3280,17 +3307,26 @@ function renderFolderList() {
     list.innerHTML = '<div style="color:var(--text3);font-size:13px;text-align:center;padding:20px">폴더가 없어요. 아래에서 추가해보세요!</div>';
     return;
   }
+  // BUGFIX: onclick 인라인 문자열 대신 상위 .folder-item의 data-folder 속성을 읽는
+  // addEventListener 방식으로 변경. 폴더명에 아포스트로피가 있으면 onclick="fn('...')"
+  // 문자열이 깨져 버튼이 먹통이 되는 문제(4지선다와 동일한 원인)가 있었음.
   list.innerHTML = folders.map(f => {
     const count = words.filter(w => w.folderId === f).length;
     return `<div class="folder-item" data-folder="${escHtml(f)}">
       <div class="folder-item-icon">📁</div>
       <div class="folder-item-name">${escHtml(f)}</div>
       <div class="folder-item-count">${count}개</div>
-      <button class="folder-item-assign" title="단어 대량 지정" onclick="openAssignModal('${escHtml(f)}')">＋</button>
-      <button class="folder-item-edit" onclick="startFolderRename(this, '${escHtml(f)}')">✏️</button>
-      <button class="folder-item-del" onclick="deleteFolder('${escHtml(f)}')">✕</button>
+      <button class="folder-item-assign" title="단어 대량 지정">＋</button>
+      <button class="folder-item-edit">✏️</button>
+      <button class="folder-item-del">✕</button>
     </div>`;
   }).join('');
+  list.querySelectorAll('.folder-item').forEach(item => {
+    const name = item.dataset.folder;
+    item.querySelector('.folder-item-assign').addEventListener('click', () => openAssignModal(name));
+    item.querySelector('.folder-item-edit').addEventListener('click', e => startFolderRename(e.currentTarget, name));
+    item.querySelector('.folder-item-del').addEventListener('click', () => deleteFolder(name));
+  });
 }
 
 // UX-03: 폴더 이름 인라인 편집
@@ -3299,6 +3335,7 @@ function startFolderRename(btn, oldName) {
   const nameEl = item.querySelector('.folder-item-name');
   const input = document.createElement('input');
   input.className = 'folder-name-input';
+  input.maxLength = 40;
   input.value = oldName;
   nameEl.replaceWith(input);
   input.focus();
@@ -3765,9 +3802,10 @@ function runAffixAnalysis(term) {
     suggestion.textContent = '';
   }
 
-  // 폴더 추천
+  // 폴더 추천 — BUGFIX: onclick 인라인 대신 data 속성 + addEventListener
   if (analysis.suggestedFolder && folders.includes(analysis.suggestedFolder)) {
-    folderSuggest.innerHTML = `<div class="affix-folder-suggest" onclick="applyFolderSuggestion('${escHtml(analysis.suggestedFolder)}')">📁 "${escHtml(analysis.suggestedFolder)}" 폴더 자동 배정</div>`;
+    folderSuggest.innerHTML = `<div class="affix-folder-suggest" data-folder="${escHtml(analysis.suggestedFolder)}">📁 "${escHtml(analysis.suggestedFolder)}" 폴더 자동 배정</div>`;
+    folderSuggest.querySelector('.affix-folder-suggest').addEventListener('click', e => applyFolderSuggestion(e.currentTarget.dataset.folder));
   } else if (analysis.suggestedFolder) {
     folderSuggest.innerHTML = `<div style="font-size:11px;color:var(--text3);margin-top:4px">💡 "${escHtml(analysis.suggestedFolder)}" 폴더를 만들면 자동 배정돼요</div>`;
   } else {
@@ -4210,9 +4248,17 @@ function renderMCOptions(current, answer, isEn2Kr) {
   const pool = diffFolder.length >= 3 ? diffFolder : others;
   const wrong3 = shuffle([...pool]).slice(0, 3).map(w => isEn2Kr ? w.meaning : w.term);
   const allOpts = shuffle([answer, ...wrong3]);
+  // BUGFIX: onclick 인라인 문자열 조합 대신 data 속성 + addEventListener 사용.
+  // 정답/오답에 아포스트로피(예: "Crohn's disease")가 포함되면 onclick="...('...')"
+  // 문자열이 그 지점에서 끊겨 문법이 깨지고, 보기 전체가 클릭도 키보드 단축키도
+  // 먹통이 되는 문제가 있었음. data 속성은 escHtml의 쌍따옴표 이스케이프만으로
+  // 안전하므로(아포스트로피는 속성 구분자가 아님) 이 문제가 발생하지 않음.
   document.getElementById('mcArea').innerHTML = allOpts.map(opt => `
-    <button class="option-choice" onclick="checkMC(this,'${escHtml(answer)}','${escHtml(opt)}')">${escHtml(opt)}</button>
+    <button class="option-choice" data-answer="${escHtml(answer)}" data-opt="${escHtml(opt)}">${escHtml(opt)}</button>
   `).join('');
+  document.querySelectorAll('#mcArea .option-choice').forEach(btn => {
+    btn.addEventListener('click', () => checkMC(btn, btn.dataset.answer, btn.dataset.opt));
+  });
 }
 
 function checkMC(btn, answer, chosen) {
@@ -4278,6 +4324,12 @@ function recordResult(correct) {
   stats.totalQ++; if (correct) stats.totalCorrect++;
   if (!correct) {
     wrongWords.push(w.id);
+    // BUGFIX: stats.errors가 undefined인 상태(옛 버전 데이터 가져오기/병합 이후)로
+    // 여기 도달하면 이 대입 자체가 예외를 던져서, 이 함수를 호출한 checkMC/checkSubj
+    // 내부의 이후 코드(nextBtn 표시 등)가 전혀 실행되지 않고 조용히 끊겼음.
+    // 화면상으로는 정답 표시까지는 됐는데 다음 문제로 못 넘어가는 것처럼 보이거나,
+    // 이 상태가 한 번 발생하면 quizAnswered가 true로 고정돼 이후 클릭도 막혔음.
+    if (!stats.errors) stats.errors = {};
     stats.errors[w.id] = (stats.errors[w.id] || 0) + 1;
   }
   initWordAlgo(w);
@@ -4540,7 +4592,10 @@ function renderStreakCalendar() {
 
 // 취약 단어 (정오 흐름 도트 추가)
 function renderWeakList() {
-  const errEntries = Object.entries(stats.errors).sort((a,b) => b[1]-a[1]).slice(0,5);
+  // BUGFIX: 가져오기/파일 병합 시 옛 버전 데이터에 errors 필드가 없으면
+  // stats.errors가 undefined가 되어 Object.entries()가 예외를 던지고
+  // 통계 화면 전체가 깨질 수 있었음. deleteWord()에는 이미 있던 방어를 여기도 적용.
+  const errEntries = Object.entries(stats.errors || {}).sort((a,b) => b[1]-a[1]).slice(0,5);
   const wl = document.getElementById('weakList');
   if (!errEntries.length) {
     wl.innerHTML = '<div style="color:var(--text3);font-size:13px;text-align:center;padding:16px">문제를 풀면 여기에 나타나요</div>';
@@ -4632,11 +4687,12 @@ function renderBubbleMap() {
   const entries = Object.entries(catMap).sort((a,b) => b[1].length - a[1].length);
   const maxCnt = entries[0]?.[1].length || 1;
 
+  // BUGFIX: onclick 인라인 대신 data 속성 + addEventListener
   const grid = document.getElementById('bubbleMap');
   grid.innerHTML = `<div class="bubble-grid">${entries.map(([cat, ws]) => {
     const meta = CAT_META[cat] || CAT_META['미분류'];
     const pct = Math.round(ws.length / maxCnt * 100);
-    return `<div class="bubble-cell" onclick="showBubbleDetail('${escHtml(cat)}')">
+    return `<div class="bubble-cell" data-cat="${escHtml(cat)}">
       <div class="bubble-icon">${meta.icon}</div>
       <div class="bubble-info">
         <div class="bubble-name">${escHtml(cat)}</div>
@@ -4647,6 +4703,9 @@ function renderBubbleMap() {
       </div>
     </div>`;
   }).join('')}</div>`;
+  grid.querySelectorAll('.bubble-cell').forEach(cell => {
+    cell.addEventListener('click', () => showBubbleDetail(cell.dataset.cat));
+  });
 }
 
 function showBubbleDetail(cat) {
@@ -4735,10 +4794,14 @@ function renderMindmap() {
   });
   const roots = Object.entries(rootMap).sort((a,b) => b[1].words.length - a[1].words.length).slice(0, 18);
 
+  // BUGFIX: onclick 인라인 대신 data 속성 + addEventListener
   const picker = document.getElementById('mindmapPicker');
   picker.innerHTML = roots.map(([affix]) =>
-    `<button class="root-chip ${activeMindmapRoot===affix?'active':''}" onclick="selectMindmapRoot('${escHtml(affix)}')">${escHtml(affix)}</button>`
+    `<button class="root-chip ${activeMindmapRoot===affix?'active':''}" data-affix="${escHtml(affix)}">${escHtml(affix)}</button>`
   ).join('');
+  picker.querySelectorAll('.root-chip').forEach(btn => {
+    btn.addEventListener('click', () => selectMindmapRoot(btn.dataset.affix));
+  });
 
   if (!activeMindmapRoot && roots.length) activeMindmapRoot = roots[0][0];
   if (!activeMindmapRoot) {
@@ -4803,6 +4866,12 @@ function drawMindmapSvg(rootAffix, data) {
 // UX-11: 마인드맵 pan/zoom 인터랙션
 // 사실 마인드맵 전용이긴 한데, 추후 SVG 인터랙션이 필요한 다른 곳에도 재활용 가능하도록 약간 일반화해서 구현
 let _mmTransform = { x: 0, y: 0, scale: 1 };
+// BUGFIX: document에 직접 건 mousemove/mouseup 리스너 참조.
+// 마인드맵을 다시 그릴 때마다(어근 전환 등) _initMindmapPanZoom이 재호출되는데,
+// wrap 내부 리스너는 cloneNode로 정리되지만 document 리스너는 정리되지 않아
+// 누를수록 계속 쌓이던 문제. 이전 리스너를 저장해뒀다가 재등록 전에 제거함.
+let _mmDocMouseMove = null;
+let _mmDocMouseUp = null;
 
 function _applyMmTransform(svg) {
   svg.style.transform = `translate(${_mmTransform.x}px, ${_mmTransform.y}px) scale(${_mmTransform.scale})`;
@@ -4820,6 +4889,10 @@ function _initMindmapPanZoom(wrap, svg) {
   wrap.parentNode.replaceChild(newWrap, wrap);
   const w = document.getElementById('mindmapWrap');
 
+  // 이전 document 리스너 제거 (BUGFIX: 누적 방지)
+  if (_mmDocMouseMove) document.removeEventListener('mousemove', _mmDocMouseMove);
+  if (_mmDocMouseUp) document.removeEventListener('mouseup', _mmDocMouseUp);
+
   // 마우스 드래그 pan
   let dragging = false, startX = 0, startY = 0, startTx = 0, startTy = 0;
   w.addEventListener('mousedown', e => {
@@ -4828,13 +4901,15 @@ function _initMindmapPanZoom(wrap, svg) {
     startTx = _mmTransform.x; startTy = _mmTransform.y;
     w.style.cursor = 'grabbing'; e.preventDefault();
   });
-  document.addEventListener('mousemove', e => {
+  _mmDocMouseMove = e => {
     if (!dragging) return;
     _mmTransform.x = startTx + (e.clientX - startX);
     _mmTransform.y = startTy + (e.clientY - startY);
     _applyMmTransform(svg);
-  });
-  document.addEventListener('mouseup', () => { dragging = false; w.style.cursor = 'grab'; });
+  };
+  _mmDocMouseUp = () => { dragging = false; w.style.cursor = 'grab'; };
+  document.addEventListener('mousemove', _mmDocMouseMove);
+  document.addEventListener('mouseup', _mmDocMouseUp);
 
   // 터치 드래그 pan (모바일)
   let touch0 = null;
@@ -4881,13 +4956,19 @@ function renderUserAffixList() {
     list.innerHTML = '<div style="color:var(--text3);font-size:13px;text-align:center;padding:20px">추가된 접사가 없어요. 위 폼으로 추가해보세요!</div>';
     return;
   }
+  // BUGFIX: onclick 인라인 대신 data 속성 + addEventListener.
+  // 렌더링 시점의 탭 값을 클로저로 고정해 탭 전환 타이밍 문제도 함께 방지.
+  const tabAtRender = activeUserAffixTab;
   list.innerHTML = items.map(item => `
     <div class="user-affix-item">
       <div class="user-affix-tag">${escHtml(item.affix)}</div>
       <div class="user-affix-meaning">${escHtml(item.meaning)}</div>
       <div class="user-affix-cat">${escHtml(item.category || '사용자')}</div>
-      <button class="user-affix-del" onclick="removeUserAffix('${activeUserAffixTab}','${escHtml(item.affix)}')" title="삭제">✕</button>
+      <button class="user-affix-del" data-affix="${escHtml(item.affix)}" title="삭제">✕</button>
     </div>`).join('');
+  list.querySelectorAll('.user-affix-del').forEach(btn => {
+    btn.addEventListener('click', () => removeUserAffix(tabAtRender, btn.dataset.affix));
+  });
 }
 
 function renderBuiltinPreview() {
@@ -5002,9 +5083,13 @@ function importData(file) {
     try {
       const data = JSON.parse(e.target.result);
       if (!Array.isArray(data.words)) throw new Error();
-      showConfirm(`${data.words.length}개의 단어를 가져올까요? 기존 데이터는 유지됩니다.`, () => {
+      // BUGFIX: 유효하지 않은 항목(term/meaning 누락 등)은 걸러내고 개수 안내
+      const validWords = data.words.filter(isValidImportedWord);
+      const skipped = data.words.length - validWords.length;
+      const skipNote = skipped > 0 ? ` (형식이 올바르지 않은 ${skipped}개는 제외)` : '';
+      showConfirm(`${validWords.length}개의 단어를 가져올까요? 기존 데이터는 유지됩니다.${skipNote}`, () => {
         const existingIds = new Set(words.map(w => w.id));
-        const newWords = data.words.filter(w => !existingIds.has(w.id)).map(initWordAlgo);
+        const newWords = validWords.filter(w => !existingIds.has(w.id)).map(initWordAlgo);
         words = [...words, ...newWords];
         if (data.stats) stats = { ...stats, ...data.stats };
         if (Array.isArray(data.folders)) folders = [...new Set([...folders, ...data.folders])];
@@ -5178,13 +5263,25 @@ document.addEventListener('keydown', function(e) {
     return e.key === sc.key && e.ctrlKey === sc.ctrl && e.altKey === sc.alt && e.shiftKey === sc.shift;
   }
 
+  // BUGFIX(핵심): goHome/goStudy/goStats/goAnalyze의 기본 단축키가 숫자 1~4이고,
+  // 퀴즈 화면의 4지선다 보기 선택도 같은 숫자 1~4를 쓰고 있어서 완전히 충돌했음.
+  // 퀴즈 화면에서 아직 정답을 고르지 않은 4지선다 문제를 풀고 있을 때(보기를
+  // 선택하려는 순간)는 탭 이동 단축키보다 보기 선택이 우선하도록, 이 네 개의
+  // 탭 이동 단축키만 이 구간에서 건너뛰게 함. 이게 없으면 정답이든 오답이든
+  // 숫자 키로 고르려는 순간 화면 자체가 바뀌어버려 "선택이 전혀 안 먹힌다"는
+  // 증상으로 나타났음 (마우스 클릭은 이 충돌과 무관해서 정상 동작했음).
+  const inActiveMcQuiz = activeScreen === 'quizScreen' && !quizAnswered
+    && document.getElementById('mcArea').style.display !== 'none';
+
   if (matches('toggleDark')) { toggleTheme(); showShortcutHint('다크모드 전환'); e.preventDefault(); return; }
   if (matches('openSettings')) { openSettings(); showShortcutHint('설정'); e.preventDefault(); return; }
-  if (matches('goHome')) { showScreen('homeScreen'); showShortcutHint('단어장'); e.preventDefault(); return; }
-  if (matches('goStudy')) { setupStudyScreen(); showScreen('studySetupScreen'); showShortcutHint('학습'); e.preventDefault(); return; }
-  if (matches('goStats')) { showScreen('statsScreen'); showShortcutHint('통계'); e.preventDefault(); return; }
-  // CODE-02: 분석 탭 단축키
-  if (matches('goAnalyze')) { showScreen('analyzeScreen'); renderAnalyze(); showShortcutHint('분석'); e.preventDefault(); return; }
+  if (!inActiveMcQuiz) {
+    if (matches('goHome')) { showScreen('homeScreen'); showShortcutHint('단어장'); e.preventDefault(); return; }
+    if (matches('goStudy')) { setupStudyScreen(); showScreen('studySetupScreen'); showShortcutHint('학습'); e.preventDefault(); return; }
+    if (matches('goStats')) { showScreen('statsScreen'); showShortcutHint('통계'); e.preventDefault(); return; }
+    // CODE-02: 분석 탭 단축키
+    if (matches('goAnalyze')) { showScreen('analyzeScreen'); renderAnalyze(); showShortcutHint('분석'); e.preventDefault(); return; }
+  }
 
   if (activeScreen === 'homeScreen') {
     if (matches('search')) { document.getElementById('searchInput').focus(); e.preventDefault(); return; }
