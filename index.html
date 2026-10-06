@@ -5974,6 +5974,23 @@ document.addEventListener('visibilitychange', () => {
   document.getElementById('flipHintClose').addEventListener('click', window.dismissFlipHint);
   if (store.get('medlex_flip_hint') !== '1') hint.hidden = false;
 })();
+  // ═══ V2 테스트: 홈 히어로 ═══
+function updateHero(){
+  try{
+    const learned=words.filter(w=>w.lastLearned);
+    const due=learned.filter(w=>getRetention(w)<0.7).length;
+    const fresh=words.length-learned.length;
+    document.getElementById('thDue').textContent=due;
+    document.getElementById('thSub').textContent=`새 단어 ${fresh}개 · 전체 ${words.length}개`;
+    document.getElementById('thStreak').textContent=calcStreak();
+  }catch(e){}
+}
+document.getElementById('thStart').addEventListener('click',()=>{
+  if(words.length<2){showToast('단어가 2개 이상 필요해요');return;}
+  setupStudyScreen(); startQuiz();
+});
+(function(){const _rw=renderWordList;renderWordList=function(){_rw.apply(this,arguments);updateHero();};})();
+updateHero();
 </script>
 </body>
 </html>
