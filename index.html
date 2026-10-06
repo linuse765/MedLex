@@ -28,7 +28,7 @@
   --border: #e2ddd6;
   --text: #1a1714;
   --text2: #6b6560;
-  --text3: #9e9890;
+  --text3: #6e6862;
   --accent: #2d6a4f;
   --accent2: #52b788;
   --accent-light: #d8f3dc;
@@ -53,7 +53,7 @@
   --border: #2e3530;
   --text: #edeae4;
   --text2: #a8a49d;
-  --text3: #666260;
+  --text3: #96928b;
   --accent: #52b788;
   --accent2: #74c69d;
   --accent-light: #1a3028;
@@ -201,7 +201,7 @@ body {
 .card-fav.active { color: var(--gold); }
 .card-front-bottom { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; }
 .card-meaning { font-size: 13px; color: var(--text2); font-weight: 400; flex: 1; }
-.card-pronunciation { font-size: 11px; color: var(--text3); background: var(--surface2); padding: 2px 8px; border-radius: 20px; font-style: italic; flex-shrink: 0; }
+.card-pronunciation { font-size: 12px; color: var(--text3); background: var(--surface2); padding: 2px 8px; border-radius: 20px; font-style: italic; flex-shrink: 0; }
 .card-edit-btns { display: flex; gap: 6px; }
 .card-edit-btn {
   width: 28px; height: 28px; border-radius: 7px; border: 1.5px solid var(--border);
@@ -217,14 +217,14 @@ body {
 
 /* 카드 폴더 배지 */
 .card-folder-tag {
-  display: inline-block; font-size: 10px; padding: 1px 7px; border-radius: 10px;
+  display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 10px;
   background: var(--surface2); color: var(--text3); border: 1px solid var(--border);
   margin-left: 6px; vertical-align: middle;
 }
 
 /* 카드 접사 배지 */
 .card-affix-hint {
-  font-size: 10px; color: var(--accent2); margin-top: 2px;
+  font-size: 12px; color: var(--accent); margin-top: 2px;
   font-style: italic; line-height: 1.4;
 }
 
@@ -256,7 +256,7 @@ body {
   align-items: center; gap: 3px; transition: var(--transition); font-family: 'DM Sans', sans-serif;
 }
 .nav-btn .nav-icon { font-size: 20px; transition: var(--transition); }
-.nav-btn .nav-label { font-size: 10px; font-weight: 500; }
+.nav-btn .nav-label { font-size: 11px; font-weight: 500; }
 .nav-btn.active { color: var(--accent); }
 .nav-btn.active .nav-icon { transform: scale(1.15); }
 
@@ -294,6 +294,29 @@ body {
 }
 .form-select:focus { border-color: var(--accent2); }
 
+/* 상세 정보 (자유 항목) */
+.details-toggle { background:none; border:none; color:var(--accent); font-size:13px; font-weight:600; cursor:pointer; padding:4px 0; font-family:inherit; margin-bottom:10px; }
+.details-wrap { display:none; margin-bottom:14px; }
+.details-wrap.open { display:block; }
+.detail-chips { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+.detail-chip { padding:5px 11px; border-radius:20px; border:1.5px solid var(--border); background:var(--surface2); color:var(--text2); font-size:12px; font-weight:500; cursor:pointer; font-family:inherit; }
+.detail-chip:hover { border-color:var(--accent2); color:var(--accent); }
+.detail-row { margin-bottom:10px; }
+.detail-row-head { display:flex; align-items:center; gap:6px; margin-bottom:4px; }
+.detail-label-input { flex:1; padding:5px 8px; border:1.5px solid var(--border); border-radius:6px; background:var(--surface2); color:var(--accent); font-size:12px; font-weight:600; font-family:inherit; outline:none; }
+.detail-label-input:focus { border-color:var(--accent2); }
+.detail-del { background:none; border:none; color:var(--text3); font-size:14px; cursor:pointer; padding:2px 6px; }
+.detail-value { width:100%; padding:9px 12px; border:1.5px solid var(--border); border-radius:var(--radius-sm); background:var(--surface2); color:var(--text); font-size:14px; font-family:inherit; resize:vertical; min-height:42px; outline:none; }
+.detail-value:focus { border-color:var(--accent2); background:var(--surface); }
+.card-back-details { margin-top:8px; max-height:84px; overflow-y:auto; font-size:12px; line-height:1.5; color:var(--text2); }
+.card-back-details .d-label { color:var(--accent); font-weight:600; margin-right:4px; }
+.card-back-details div { margin-bottom:2px; white-space:pre-line; }
+.memo-details { margin-top:14px; max-height:30vh; overflow-y:auto; text-align:left; font-size:13px; line-height:1.55; color:var(--text2); }
+.memo-details .d-label { color:var(--accent); font-weight:600; margin-right:4px; }
+.memo-details div { margin-bottom:4px; white-space:pre-line; }
+.chip-setting-list { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+.chip-setting { display:inline-flex; align-items:center; gap:4px; padding:4px 6px 4px 11px; border-radius:20px; background:var(--surface2); border:1.5px solid var(--border); font-size:12px; color:var(--text); }
+.chip-setting button { background:none; border:none; color:var(--text3); cursor:pointer; font-size:13px; padding:0 4px; }
 .form-row { display: flex; gap: 10px; }
 .btn {
   padding: 12px 20px; border-radius: var(--radius-sm); border: none;
@@ -1058,76 +1081,7 @@ body {
   display: flex; align-items: center; justify-content: center; transition: var(--transition);
 }
 .log-close:hover { background: var(--border); color: var(--text); }
-.log-tabs {
-  display: flex; gap: 4px; padding: 14px 20px 0;
-  border-bottom: 1.5px solid var(--border); flex-shrink: 0;
-}
-.log-tab {
-  padding: 8px 16px; border-radius: 8px 8px 0 0; border: none; background: transparent;
-  color: var(--text3); font-size: 12px; font-weight: 600; font-family: 'DM Sans', sans-serif;
-  cursor: pointer; transition: var(--transition); border-bottom: 2px solid transparent;
-  margin-bottom: -1.5px;
-}
-.log-tab.active { color: var(--accent); border-bottom-color: var(--accent); background: var(--accent-light); }
 .log-body { overflow-y: auto; padding: 20px; flex: 1; }
-.log-tab-content { display: none; }
-.log-tab-content.active { display: block; }
-
-/* 패치노트 스타일 */
-.patch-version-block { margin-bottom: 24px; }
-.patch-version-header {
-  display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
-  padding-bottom: 8px; border-bottom: 1.5px solid var(--border);
-}
-.patch-version-num {
-  font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--accent); font-weight: 700;
-}
-.patch-version-date { font-size: 11px; color: var(--text3); }
-.patch-version-badge {
-  font-size: 10px; padding: 2px 8px; border-radius: 10px;
-  background: var(--accent-light); color: var(--accent); font-weight: 700; border: 1px solid var(--accent2);
-  margin-left: auto;
-}
-.patch-item {
-  display: flex; align-items: flex-start; gap: 8px; padding: 6px 0;
-  border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5;
-}
-.patch-item:last-child { border-bottom: none; }
-.patch-item-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
-
-/* 피드백 탭 스타일 */
-.feedback-form { margin-bottom: 16px; }
-.feedback-textarea {
-  width: 100%; min-height: 80px; padding: 11px 14px;
-  border-radius: var(--radius-sm); border: 1.5px solid var(--border);
-  background: var(--surface2); color: var(--text); font-size: 13px;
-  font-family: 'DM Sans', sans-serif; outline: none; resize: vertical;
-  transition: var(--transition); line-height: 1.5;
-}
-.feedback-textarea:focus { border-color: var(--accent2); background: var(--surface); }
-.feedback-save-btn {
-  margin-top: 8px; width: 100%; padding: 11px; border-radius: var(--radius-sm);
-  border: none; background: var(--accent); color: #fff;
-  font-size: 13px; font-weight: 600; font-family: 'DM Sans', sans-serif;
-  cursor: pointer; transition: var(--transition);
-}
-.feedback-save-btn:hover { background: var(--accent2); }
-.feedback-item {
-  padding: 12px 14px; background: var(--surface2); border-radius: var(--radius-sm);
-  border: 1.5px solid var(--border); margin-bottom: 8px;
-}
-.feedback-item-date { font-size: 10px; color: var(--text3); margin-bottom: 4px; }
-.feedback-item-text { font-size: 13px; color: var(--text); line-height: 1.5; }
-.feedback-item-del {
-  float: right; font-size: 11px; color: var(--text3); background: none; border: none;
-  cursor: pointer; padding: 0; transition: var(--transition);
-}
-.feedback-item-del:hover { color: var(--danger); }
-.feedback-contact {
-  margin-top: 24px; text-align: right; font-size: 11px; color: var(--text3);
-  font-style: italic; opacity: 0.7;
-}
-
 /* ── UX-03: 폴더 이름 수정 버튼 ── */
 .folder-item-edit {
   width: 26px; height: 26px; border-radius: 6px; border: 1.5px solid var(--border);
@@ -1339,6 +1293,82 @@ body {
   background: var(--border); transition: background 0.2s;
 }
 .tour-dot.active { background: var(--accent2); width: 14px; border-radius: 3px; }
+
+/* ════════════════════════════════════════
+   UX 개선 패치 (FAB·카드 메뉴·필터·대비)
+════════════════════════════════════════ */
+/* FAB: 마지막 카드가 가려지지 않게 여백 확보 + 스크롤 중엔 숨김 */
+.word-list { padding-bottom: 160px; }
+.fab.fab-hidden { transform: translateY(96px) scale(0.8); opacity: 0; pointer-events: none; }
+.fab:focus-visible, .card-menu-btn:focus-visible, .meaning-toggle:focus-visible, .filter-tab:focus-visible, .icon-btn:focus-visible { outline: 2px solid var(--accent2); outline-offset: 2px; }
+
+/* 헤더: 아이콘 + 라벨 */
+.icon-btn.labeled { width: auto; min-width: 46px; height: 48px; padding: 4px 8px; flex-direction: column; gap: 3px; font-size: 16px; }
+.icon-btn .icon-glyph { line-height: 1; font-size: 16px; }
+.icon-btn .icon-label { font-size: 11px; font-weight: 500; line-height: 1; color: var(--text2); }
+
+/* 필터 줄: 1행(개수·정렬) / 2행(칩) */
+.stats-bar { row-gap: 8px; }
+.stats-count { flex: 1; font-size: 13px; color: var(--text2); }
+.sort-select { font-size: 12px; padding: 5px 8px; }
+.filter-tabs { flex-basis: 100%; margin-left: 0; order: 3; gap: 6px; }
+.filter-tab { padding: 6px 12px; font-size: 13px; white-space: nowrap; color: var(--text2); }
+.meaning-toggle {
+  margin-left: auto; padding: 6px 12px; border-radius: 20px; border: 1.5px dashed var(--border);
+  background: transparent; color: var(--text2); font-size: 13px; font-weight: 500; white-space: nowrap;
+  font-family: 'DM Sans', sans-serif; cursor: pointer; transition: var(--transition);
+}
+.meaning-toggle[aria-pressed="true"] { background: var(--accent-light); border: 1.5px solid var(--accent); color: var(--accent); }
+
+/* 첫 사용 안내 */
+.flip-hint {
+  margin: 0 16px 10px; padding: 8px 10px 8px 12px; border-radius: var(--radius-sm);
+  background: var(--accent-light); color: var(--text2); font-size: 12px; line-height: 1.5;
+  display: flex; align-items: center; gap: 8px; border: 1px solid var(--border);
+}
+.flip-hint[hidden] { display: none; }
+.flip-hint span { flex: 1; }
+.flip-hint b { color: var(--accent); font-weight: 600; }
+.flip-hint button { border: none; background: transparent; color: var(--text2); font-size: 14px; width: 28px; height: 28px; cursor: pointer; border-radius: 6px; }
+
+/* 카드: 압축 레이아웃 (뜻을 단어 바로 아래, 버튼은 우측 상단 메뉴로) */
+.card-front, .card-back { padding: 12px 14px; min-height: 0; }
+.card-front-top { align-items: flex-start; }
+.card-front-actions { align-items: center; gap: 2px; margin: -4px -6px 0 0; }
+.tier-badge {
+  font-size: 11px; font-weight: 600; line-height: 1.4; padding: 1px 8px; margin-right: 4px;
+  border: 1px solid currentColor; border-radius: 20px; white-space: nowrap;
+}
+.card-fav { font-size: 20px; padding: 6px; min-width: 32px; text-align: center; }
+.card-menu-btn {
+  width: 32px; height: 32px; border: none; background: transparent; color: var(--text2);
+  font-size: 20px; line-height: 1; border-radius: 8px; cursor: pointer; transition: var(--transition);
+  display: flex; align-items: center; justify-content: center; padding-bottom: 4px;
+}
+.card-menu-btn:hover { background: var(--surface2); color: var(--text); }
+.card-front-bottom { margin-top: 6px; align-items: center; gap: 8px; }
+.card-meaning { font-size: 14px; line-height: 1.4; color: var(--text2); transition: filter 0.2s; }
+.word-list.hide-meaning .card-meaning { filter: blur(7px); user-select: none; }
+.memory-sub { font-size: 12px; color: var(--text2); }
+.memory-bar-wrap { padding-top: 8px; }
+.card-back-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 2px; }
+.card-back-head .card-back-term { margin-bottom: 0; }
+.card-back-meaning { line-height: 1.25; }
+.card-back-meaning { font-size: 19px; flex: 0 0 auto; margin-bottom: 6px; }
+
+/* 카드 더보기 메뉴 */
+.card-menu {
+  position: fixed; z-index: 150; min-width: 132px; padding: 4px; display: none;
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; box-shadow: var(--shadow-lg);
+}
+.card-menu.open { display: block; }
+.card-menu button {
+  display: flex; align-items: center; gap: 8px; width: 100%; padding: 11px 12px; border: none; border-radius: 7px;
+  background: transparent; color: var(--text); font-size: 14px; font-family: 'DM Sans', sans-serif; cursor: pointer; text-align: left;
+}
+.card-menu button:hover { background: var(--surface2); }
+.card-menu button.danger { color: var(--danger); }
+@media (prefers-reduced-motion: reduce) { .fab, .card-meaning { transition: none; } }
 </style>
 </head>
 <body>
@@ -1347,14 +1377,9 @@ body {
   <!-- ── 헤더 ── -->
   <header class="header">
     <div class="header-logo">MedLex <span>V-alpha</span></div>
-    <!-- UX-12: 🗒️ 로그/기록 버튼 추가 (순서: 🗒️ → 💾 → ⚙️) -->
-    <button class="icon-btn" id="logBtn" title="패치노트 및 피드백" style="position:relative">
-      🗒️
-      <span id="logBadge" style="display:none;position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:var(--danger)"></span>
-    </button>
-    <button class="icon-btn" id="fileStatusBtn" title="파일 저장 상태" style="font-size:13px">💾</button>
-    <button class="icon-btn" id="settingsBtn" title="설정" style="position:relative">
-      ⚙️
+    <button class="icon-btn labeled" id="fileStatusBtn" title="파일 저장 상태" aria-label="파일 저장 상태"><span class="icon-glyph">💾</span><span class="icon-label">저장</span></button>
+    <button class="icon-btn labeled" id="settingsBtn" title="설정" aria-label="설정" style="position:relative">
+      <span class="icon-glyph">⚙️</span><span class="icon-label">설정</span>
       <span class="kbd-badge" id="kbdSettings"></span>
     </button>
   </header>
@@ -1365,7 +1390,7 @@ body {
   <div class="screen active" id="homeScreen">
     <div class="search-bar">
       <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" placeholder="영어 또는 뜻으로 검색... (/)">
+      <input type="text" id="searchInput" placeholder="영어, 뜻, 상세 정보로 검색... (/)">
     </div>
     <div class="folder-bar">
       <select class="folder-select" id="folderFilter">
@@ -1387,7 +1412,12 @@ body {
         <button class="filter-tab active" data-filter="all">전체</button>
         <button class="filter-tab" data-filter="fav">★ 즐겨찾기</button>
         <button class="filter-tab" data-filter="review">🔥 복습 필요</button>
+        <button class="meaning-toggle" id="meaningToggle" aria-pressed="false" title="뜻을 흐리게 가려서 스스로 테스트해요">뜻 가리기</button>
       </div>
+    </div>
+    <div class="flip-hint" id="flipHint" hidden>
+      <span>카드를 탭하면 뒷면에서 기억 에너지를 볼 수 있어요. <b>뜻 가리기</b>로 스스로 테스트해 보세요.</span>
+      <button type="button" id="flipHintClose" aria-label="안내 닫기">✕</button>
     </div>
     <div class="word-list" id="wordList"></div>
   </div>
@@ -1421,6 +1451,7 @@ body {
           <div class="option-grid">
             <button class="option-btn selected" data-group="dir" data-val="en2kr">영어 → 뜻</button>
             <button class="option-btn" data-group="dir" data-val="kr2en">뜻 → 영어</button>
+            <button class="option-btn" data-group="dir" data-val="detail" style="grid-column:1/-1">📝 상세 정보 (기시·정지·신경·작용 등, 객관식)</button>
           </div>
         </div>
       </div>
@@ -1516,6 +1547,7 @@ body {
             <div class="memo-front-label">뜻</div>
             <div class="memo-meaning" id="memoMeaning">—</div>
             <div class="memo-meaning-sub" id="memoMeaningSub"></div>
+            <div class="memo-details" id="memoDetails"></div>
           </div>
         </div>
       </div>
@@ -1797,7 +1829,7 @@ body {
   </nav>
 
   <!-- FAB 추가 버튼 -->
-  <button class="fab" id="fabAdd" style="position:fixed">
+  <button class="fab" id="fabAdd" style="position:fixed" aria-label="단어 추가" title="단어 추가">
     ＋
     <span class="kbd-badge" id="kbdAdd" style="top:-10px;right:-8px;"></span>
   </button>
@@ -1835,6 +1867,11 @@ body {
         <select class="form-select" id="inputFolder">
           <option value="">폴더 없음</option>
         </select>
+      </div>
+      <button type="button" class="details-toggle" id="detailsToggle" onclick="toggleDetails()">+ 상세 정보</button>
+      <div class="details-wrap" id="detailsWrap">
+        <div class="detail-chips" id="detailChips"></div>
+        <div id="detailRows"></div>
       </div>
       <div class="form-row">
         <button class="btn btn-secondary" id="modalCancel">취소</button>
@@ -1942,6 +1979,15 @@ body {
                 <span style="font-size:13px;font-weight:500;color:var(--text)">다크 모드</span>
                 <button class="toggle-switch" id="darkToggle" onclick="toggleTheme()"></button>
               </label>
+            </div>
+          </div>
+          <div class="pref-section">
+            <div class="pref-section-title">📝 상세 정보 항목</div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:8px">단어 추가 시 탭 한 번으로 넣는 항목명이에요.</div>
+            <div class="chip-setting-list" id="chipSettingList"></div>
+            <div style="display:flex;gap:8px">
+              <input class="form-input" id="chipSettingInput" placeholder="새 항목명 (예: 혈관)" maxlength="20" style="flex:1;padding:8px 12px;font-size:13px">
+              <button class="settings-action-btn" style="padding:8px 14px;font-size:13px" onclick="addChipSetting()">추가</button>
             </div>
           </div>
         </div>
@@ -2109,54 +2155,6 @@ body {
     </div>
   </div>
 
-  <!-- UX-12: 로그/기록 모달 -->
-  <div class="log-overlay" id="logOverlay">
-    <div class="log-panel">
-      <div class="log-header">
-        <div class="log-title">🗒️ 기록</div>
-        <button class="log-close" id="logClose">✕</button>
-      </div>
-      <div class="log-tabs">
-        <button class="log-tab active" data-ltab="patch">📋 패치노트</button>
-        <button class="log-tab" data-ltab="feedback">💬 나의 피드백</button>
-      </div>
-      <div class="log-body">
-        <!-- 패치노트 탭 -->
-        <div class="log-tab-content active" id="ltab-patch">
-          <div class="patch-version-block">
-            <div class="patch-version-header">
-              <span class="patch-version-num">V-alpha</span>
-              <span class="patch-version-date">2026</span>
-              <span class="patch-version-badge">알파 테스트 버전</span>
-            </div>
-            <div class="patch-item"><span class="patch-item-icon">🐛</span><div><b>[BUG-01]</b> 스트릭 계산 오류 수정 — 오늘 또는 어제 학습했으면 연속일 유지</div></div>
-            <div class="patch-item"><span class="patch-item-icon">🐛</span><div><b>[BUG-02]</b> 객관식 오답 보기 품질 개선 — 단어 4개 미만 시 주관식 자동 전환, 다른 폴더 단어 우선 선택</div></div>
-            <div class="patch-item"><span class="patch-item-icon">🐛</span><div><b>[BUG-03]</b> 아포스트로피가 들어간 단어가 선택지에 나올 경우 종종 멈추던 상황 해결</div></div>
-            <div class="patch-item"><span class="patch-item-icon">🐛</span><div><b>[BUG-04]</b> 오답 선택 시 통계 기록 오류로 이후 모든 입력이 무시되던 문제 수정</div></div>
-            <div class="patch-item"><span class="patch-item-icon">🧠</span><div><b>[로직 변경-1]</b> 퀴즈 진행 중 단어 배열 참조 안전성 개선 — 얕은 복사본으로 퀴즈 진행</div></div>
-            <div class="patch-item"><span class="patch-item-icon">✨</span><div><b>[UX-01]</b> 폴더 대량 지정 기능 추가</div></div>
-            <div class="patch-item"><span class="patch-item-icon">✨</span><div><b>[UX-02]</b> 처음 이용한 사용자에 대한 튜토리얼 기능 추가</div></div>
-            <div class="patch-item"><span class="patch-item-icon">🔧</span><div><b>[코드 개선-01]</b> 홈 화면 필터 탭 레이아웃 오버플로우 처리 개선</div></div>
-            <div class="patch-item"><span class="patch-item-icon">🔧</span><div><b>[코드 개선-02]</b> 분석 탭 단축키 '4' 기본값으로 등록</div></div>
-            <div class="patch-item"><span class="patch-item-icon">🔧</span><div><b>[코드 개선-03]</b> 폴더 대량 지정 기능 추가</div></div>
-            <div class="patch-item"><span class="patch-item-icon">🪳</span><div><b>[발견된 버그-01]</b> 분석탭 내 사전 기능 / 내장된 접두, 접미사를 제대로 인식하지 못하는 문제</div></div>
-            <div class="patch-item"><span class="patch-item-icon">🪳</span><div><b>[발견된 버그-02]</b> 단어 수정 후 새로고침해야 변경 사항이 노출되는 문제</div></div>
-            <div class="patch-item"><span class="patch-item-icon">🪳</span><div><b>[발견된 버그-03]</b> 학습탭을 눌렀을 경우 실제 작동되는 학습 설정과 무관하게 처음에는 외우기로 설정되는 문제</div></div>
-            <div class="patch-item"><span class="patch-item-icon">⬆️</span><div><b>[개선예정 사항]</b> 폴더 대량 지정 시 출력되는 단어들에 대한 정렬 및 필터링 기능 추가</div></div>
-          </div>
-        </div>
-        <!-- 피드백 탭 -->
-        <div class="log-tab-content" id="ltab-feedback">
-          <div class="feedback-form">
-            <textarea class="feedback-textarea" id="feedbackInput" placeholder="불편한 점, 건의사항, 버그 제보 등을 자유롭게 적어주세요..."></textarea>
-            <button class="feedback-save-btn" id="feedbackSaveBtn">💾 기록 저장</button>
-          </div>
-          <div id="feedbackList"></div>
-          <div class="feedback-contact">피드백은 medlexjw@gmail.com 으로 보내주세요 🙏</div>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
 
 
@@ -2714,7 +2712,86 @@ const HALO = {
 const STREAK = { BONUS_PER: 0.15, MAX_STREAK: 5 };
 
 // 단어 알고리즘 필드 초기화
+// 상세 정보 칩 (사용자 편집 가능)
+const DEFAULT_DETAIL_CHIPS = ['기시', '정지', '신경', '작용'];
+let detailChips = DEFAULT_DETAIL_CHIPS.slice();
+
+function detailsHtml(w) {
+  if (!Array.isArray(w.details) || !w.details.length) return '';
+  return w.details.map(d => `<div><span class="d-label">${escHtml(d.label)}</span>${escHtml(d.value)}</div>`).join('');
+}
+
+function renderDetailChips() {
+  const box = document.getElementById('detailChips'); if (!box) return;
+  box.innerHTML = '';
+  detailChips.concat(['기타']).forEach(label => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'detail-chip'; b.textContent = label === '기타' ? '+ 직접 입력' : label;
+    b.onclick = () => addDetailRow(label === '기타' ? '' : label, '', true);
+    box.appendChild(b);
+  });
+}
+
+function addDetailRow(label, value, focus) {
+  const rows = document.getElementById('detailRows');
+  if (label) { // 같은 항목은 중복 생성하지 않고 기존 칸으로 이동
+    for (const r of rows.children) {
+      if (r.querySelector('.detail-label-input').value.trim() === label) { r.querySelector('textarea').focus(); return; }
+    }
+  }
+  const row = document.createElement('div'); row.className = 'detail-row';
+  const head = document.createElement('div'); head.className = 'detail-row-head';
+  const li = document.createElement('input'); li.className = 'detail-label-input'; li.maxLength = 20; li.placeholder = '항목명'; li.value = label;
+  const del = document.createElement('button'); del.type = 'button'; del.className = 'detail-del'; del.textContent = '✕'; del.onclick = () => row.remove();
+  const ta = document.createElement('textarea'); ta.className = 'detail-value'; ta.rows = 2; ta.maxLength = 500; ta.value = value || '';
+  head.append(li, del); row.append(head, ta); rows.appendChild(row);
+  if (focus) (label ? ta : li).focus();
+}
+
+function toggleDetails(forceOpen) {
+  const wrap = document.getElementById('detailsWrap');
+  const open = forceOpen !== undefined ? forceOpen : !wrap.classList.contains('open');
+  wrap.classList.toggle('open', open);
+  document.getElementById('detailsToggle').textContent = open ? '− 상세 정보 접기' : '+ 상세 정보';
+  if (open) renderDetailChips();
+}
+
+function collectDetails() {
+  const out = [];
+  document.querySelectorAll('#detailRows .detail-row').forEach(r => {
+    const value = r.querySelector('textarea').value.trim();
+    if (!value) return;
+    out.push({ label: r.querySelector('.detail-label-input').value.trim() || '기타', value });
+  });
+  return out;
+}
+
+function resetDetails() {
+  document.getElementById('detailRows').innerHTML = '';
+  toggleDetails(false);
+}
+
+function renderChipSettings() {
+  const box = document.getElementById('chipSettingList'); if (!box) return;
+  box.innerHTML = '';
+  detailChips.forEach((label, i) => {
+    const el = document.createElement('span'); el.className = 'chip-setting'; el.textContent = label;
+    const x = document.createElement('button'); x.textContent = '✕';
+    x.onclick = () => { detailChips.splice(i, 1); savePrefs(); renderChipSettings(); renderDetailChips(); };
+    el.appendChild(x); box.appendChild(el);
+  });
+}
+
+function addChipSetting() {
+  const inp = document.getElementById('chipSettingInput');
+  const v = inp.value.trim(); if (!v) return;
+  if (detailChips.includes(v)) { showToast('이미 있는 항목이에요'); return; }
+  detailChips.push(v); inp.value = '';
+  savePrefs(); renderChipSettings(); renderDetailChips();
+}
+
 function initWordAlgo(w) {
+  if (w.details     === undefined) w.details     = [];
   if (w.halflife    === undefined) w.halflife    = HALO.INIT_HL;
   if (w.lastLearned === undefined) w.lastLearned = null;
   if (w.p_known     === undefined) w.p_known     = BKT.P_INIT;
@@ -3057,6 +3134,7 @@ function savePrefs() {
   localStorage.setItem('medlex_layout', layoutMode);
   localStorage.setItem('medlex_showbadges', showShortcutBadges ? '1' : '0');
   localStorage.setItem('medlex_folders', JSON.stringify(folders));
+  localStorage.setItem('medlex_detailchips', JSON.stringify(detailChips));
 }
 // 전체 즉시 저장 (종료 시, 중요 이벤트 시)
 function saveAll() {
@@ -3064,6 +3142,7 @@ function saveAll() {
   localStorage.setItem('medlex_words', JSON.stringify(words));
   localStorage.setItem('medlex_stats', JSON.stringify(stats));
   localStorage.setItem('medlex_folders', JSON.stringify(folders));
+  localStorage.setItem('medlex_detailchips', JSON.stringify(detailChips));
   localStorage.setItem('medlex_theme', theme);
   localStorage.setItem('medlex_layout', layoutMode);
   localStorage.setItem('medlex_showbadges', showShortcutBadges ? '1' : '0');
@@ -3096,6 +3175,7 @@ function load() {
   if (w) { try { words = JSON.parse(w); words.forEach(initWordAlgo); } catch { words = []; } }
   if (s) { try { stats = JSON.parse(s); } catch { /* 기본 stats 유지 */ } }
   if (f) { try { folders = JSON.parse(f); } catch { folders = []; } } else { folders = []; }
+  try { const dc = JSON.parse(localStorage.getItem('medlex_detailchips') || 'null'); if (Array.isArray(dc)) detailChips = dc.filter(x => typeof x === 'string' && x); } catch { /* 기본 칩 유지 */ }
   if (t) { theme = t; applyTheme(); }
   if (l) { layoutMode = l; applyLayout(false); }
   if (sb) { showShortcutBadges = sb === '1'; applyShortcutBadgeToggle(); }
@@ -3499,7 +3579,7 @@ function equalizeCardHeights() {
       // 높이 측정을 위해 뒷면 일시적으로 가시화 (화면엔 안 보임)
       back.style.transform   = 'rotateY(0deg)';
       back.style.visibility  = 'hidden';
-      const maxH = Math.max(front.scrollHeight, back.scrollHeight, 110);
+      const maxH = Math.max(front.scrollHeight, back.scrollHeight, 96);
       back.style.transform   = '';
       back.style.visibility  = '';
       front.style.minHeight  = maxH + 'px';
@@ -3528,7 +3608,8 @@ function renderWordList() {
     list = list.filter(w =>
       w.term.toLowerCase().includes(q) ||
       w.meaning.toLowerCase().includes(q) ||
-      (w.pronunciation && w.pronunciation.toLowerCase().includes(q))
+      (w.pronunciation && w.pronunciation.toLowerCase().includes(q)) ||
+      (Array.isArray(w.details) && w.details.some(d => d.value.toLowerCase().includes(q)))
     );
   }
 
@@ -3591,6 +3672,11 @@ function _buildCardHtml(w) {
   const retPct = Math.round(retention * 100);
   const retColor = retention >= 0.7 ? 'var(--accent)' : retention >= 0.4 ? 'var(--gold)' : 'var(--danger)';
   const hlDays = w.halflife.toFixed(1);
+  const learned = !!w.lastLearned;
+  const tierLabel = learned ? badge.label : '새 단어';
+  const tierColor = learned ? badge.color : 'var(--text2)';
+  const retText = learned ? `${retPct}% 유지 중` : '아직 학습 전';
+  const barPct = learned ? retPct : 0;
   const folderTag = w.folderId ? `<span class="card-folder-tag">📁 ${escHtml(w.folderId)}</span>` : '';
   const analysis = analyzeMedicalTerm(w.term);
   const affixHint = analysis.roots.length > 0
@@ -3606,36 +3692,28 @@ function _buildCardHtml(w) {
             ${affixHint}
           </div>
           <div class="card-front-actions">
-            <span class="mastery-badge" title="${badge.label} — BKT: ${Math.round(w.p_known*100)}%" style="color:${badge.color};font-size:14px">${badge.icon}</span>
-            <span class="card-fav ${w.fav ? 'active' : ''}" onclick="toggleFav(event,'${w.id}')">${w.fav ? '★' : '☆'}</span>
+            <span class="tier-badge" title="${badge.label} — BKT: ${Math.round(w.p_known*100)}%" style="color:${tierColor}">${tierLabel}</span>
+            <span class="card-fav ${w.fav ? 'active' : ''}" role="button" aria-label="즐겨찾기" onclick="toggleFav(event,'${w.id}')">${w.fav ? '★' : '☆'}</span>
+            <button class="card-menu-btn" aria-label="더보기" aria-haspopup="menu" onclick="openCardMenu(event,'${w.id}')">⋯</button>
           </div>
         </div>
         <div class="card-front-bottom">
           <div class="card-meaning">${escHtml(w.meaning)}</div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
-            ${w.pronunciation ? `<div class="card-pronunciation">${escHtml(w.pronunciation)}</div>` : ''}
-            <div class="card-edit-btns">
-              <button class="card-edit-btn" onclick="editWord(event,'${w.id}')">✏️</button>
-              <button class="card-edit-btn del" onclick="deleteWord(event,'${w.id}')">🗑️</button>
-            </div>
-          </div>
+          ${w.pronunciation ? `<div class="card-pronunciation">${escHtml(w.pronunciation)}</div>` : ''}
         </div>
       </div>
       <div class="card-back">
-        <div class="card-back-term">${escHtml(w.term)}</div>
+        <div class="card-back-head"><div class="card-back-term">${escHtml(w.term)}</div><span class="memory-sub">반감기 ${hlDays}일</span></div>
         <div class="card-back-meaning">${escHtml(w.meaning)}</div>
         ${w.pronunciation ? `<div class="card-back-pron">🔊 ${escHtml(w.pronunciation)}</div>` : ''}
+        ${detailsHtml(w) ? `<div class="card-back-details">${detailsHtml(w)}</div>` : ''}
         <div class="memory-bar-wrap">
           <div class="memory-bar-label">
             <span>🧠 기억 에너지</span>
-            <span style="font-size:10px;color:var(--text3)">반감기 ${hlDays}일</span>
+            <span class="memory-sub" style="color:${learned ? 'var(--text2)' : 'var(--text2)'}">${retText}</span>
           </div>
           <div class="memory-bar-track">
-            <div class="memory-bar-fill" style="width:${retPct}%;background:${retColor}"></div>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
-            <span style="font-size:10px;color:var(--text3)">${retPct}% 유지 중</span>
-            <span style="font-size:10px;color:${badge.color};font-weight:600">${badge.icon} ${badge.label}</span>
+            <div class="memory-bar-fill" style="width:${barPct}%;background:${retColor}"></div>
           </div>
         </div>
       </div>
@@ -3675,7 +3753,8 @@ function _setupScrollLoader(el) {
 }
 
 function flipCard(e, id) {
-  if (e.target.closest('.card-edit-btn') || e.target.closest('.card-fav')) return;
+  if (e.target.closest('.card-edit-btn') || e.target.closest('.card-fav') || e.target.closest('.card-menu-btn')) return;
+  if (typeof dismissFlipHint === 'function') dismissFlipHint();
   document.getElementById('card-' + id).classList.toggle('flipped');
 }
 
@@ -3718,6 +3797,11 @@ function editWord(e, id) {
   document.getElementById('inputPron').value = w.pronunciation || '';
   renderFolderSelects();
   document.getElementById('inputFolder').value = w.folderId || '';
+  resetDetails();
+  if (Array.isArray(w.details) && w.details.length) {
+    toggleDetails(true);
+    w.details.forEach(d => addDetailRow(d.label, d.value, false));
+  }
   // 접사 분석 패널 갱신
   runAffixAnalysis(w.term);
   openModal();
@@ -3756,6 +3840,7 @@ function closeModal() {
   document.getElementById('inputPron').value = '';
   document.getElementById('inputFolder').value = '';
   document.getElementById('modalTitle').textContent = '단어 추가';
+  resetDetails();
   // 접사 패널 숨기기
   document.getElementById('affixPanel').classList.remove('show');
   // UX-02: 수정 모드였을 때만 스크롤 복원
@@ -3828,7 +3913,7 @@ async function saveWord() {
 
   if (editId) {
     const w = words.find(x => x.id === editId);
-    if (w) { w.term = term; w.meaning = meaning; w.pronunciation = pron; w.folderId = folderId; }
+    if (w) { w.term = term; w.meaning = meaning; w.pronunciation = pron; w.folderId = folderId; w.details = collectDetails(); }
     showToast('수정됐어요 ✓');
     save(); _lastRenderKey = ''; closeModal(); renderWordList();
     updateFileStatusUI();
@@ -3851,7 +3936,8 @@ async function saveWord() {
 async function _doSaveWord(term, meaning, pron, folderId) {
   const nw = initWordAlgo({
     id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-    term, meaning, pronunciation: pron, fav: false, folderId
+    term, meaning, pronunciation: pron, fav: false, folderId,
+    details: collectDetails()
   });
   words.push(nw);
   await checkAutoBackup();
@@ -3885,6 +3971,7 @@ function getStudyPool() {
   if (quizConfig.wrongOnly && lastWrongWords.length) {
     pool = lastWrongWords.map(id => words.find(w => w.id === id)).filter(Boolean);
   }
+  if (quizConfig.dir === 'detail') pool = pool.filter(w => Array.isArray(w.details) && w.details.length);
   return pool;
 }
 
@@ -4004,6 +4091,7 @@ function renderMemoCard() {
   document.getElementById('memoMeaning').textContent = w.meaning;
   document.getElementById('memoMeaningSub').textContent =
     memoRound === 2 ? '🔁 다시 한번 확인해보세요' : '';
+  document.getElementById('memoDetails').innerHTML = detailsHtml(w);
 
   // 카드가 이미 앞면(flipped 없음) 상태에서 데이터만 갱신
   // — flipped 제거는 judgeMemo에서 애니메이션보다 먼저 처리됨
@@ -4106,7 +4194,11 @@ function endMemo() {
 // ── 퀴즈 시작 ──
 function startQuiz() {
   let pool = getStudyPool();
-  if (pool.length < 2) { showToast('단어가 2개 이상 필요해요'); return; }
+  if (quizConfig.dir === 'detail') {
+    const distinct = new Set();
+    words.forEach(w => (w.details || []).forEach(d => distinct.add(d.value)));
+    if (pool.length < 1 || distinct.size < 4) { showToast('상세 정보가 입력된 단어가 더 필요해요 (서로 다른 내용 4개 이상)'); return; }
+  } else if (pool.length < 2) { showToast('단어가 2개 이상 필요해요'); return; }
   let count = quizConfig.count === 'all' ? pool.length : parseInt(quizConfig.count);
   count = Math.min(count, pool.length);
 
@@ -4167,6 +4259,7 @@ function stopLatencyBar() {
 }
 
 function getQuizType() {
+  if (quizConfig.dir === 'detail') return 'mc'; // 상세 정보는 긴 문장이라 객관식만
   if (quizConfig.type === 'random') return Math.random() < 0.5 ? 'mc' : 'subj';
   return quizConfig.type;
 }
@@ -4194,18 +4287,24 @@ function renderQuizQuestion() {
 
   startLatencyBar();
 
-  const isEn2Kr = quizConfig.dir === 'en2kr';
+  const isDetail = quizConfig.dir === 'detail';
+  if (isDetail) w._q = w.details[Math.floor(Math.random() * w.details.length)]; // 이번 문제에 쓸 항목
+  const isEn2Kr = quizConfig.dir !== 'kr2en';
   const question = isEn2Kr ? w.term : w.meaning;
-  const answer = isEn2Kr ? w.meaning : w.term;
+  const answer = isDetail ? w._q.value : (isEn2Kr ? w.meaning : w.term);
   const type = getQuizType();
   const total = quizWords.length;
 
   document.getElementById('quizProgressLabel').textContent = `${quizIdx + 1} / ${total}`;
   document.getElementById('quizProgressFill').style.width = `${((quizIdx + 1) / total) * 100}%`;
   const qEl = document.getElementById('quizQuestion');
-  qEl.textContent = question;
+  if (isDetail) {
+    qEl.innerHTML = `${escHtml(w.term)}<div style="font-size:15px;font-weight:600;color:var(--accent);margin-top:8px">${escHtml(w._q.label)}은(는)?</div>`;
+  } else {
+    qEl.textContent = question;
+  }
   qEl.className = 'quiz-question' + (isEn2Kr ? '' : ' kr');
-  document.getElementById('quizBadge').textContent = type === 'mc' ? '객관식' : '주관식';
+  document.getElementById('quizBadge').textContent = isDetail ? '상세 정보' : (type === 'mc' ? '객관식' : '주관식');
   document.getElementById('nextBtn').style.display = 'none';
 
   // 힌트 패널 초기화
@@ -4215,7 +4314,7 @@ function renderQuizQuestion() {
   if (type === 'mc') {
     document.getElementById('mcArea').style.display = 'flex';
     document.getElementById('subjArea').style.display = 'none';
-    renderMCOptions(w, answer, isEn2Kr);
+    if (isDetail) renderDetailOptions(w, answer); else renderMCOptions(w, answer, isEn2Kr);
   } else {
     document.getElementById('mcArea').style.display = 'none';
     document.getElementById('subjArea').style.display = 'flex';
@@ -4224,6 +4323,34 @@ function renderQuizQuestion() {
     document.getElementById('subjFeedback').textContent = '';
     setTimeout(() => inp.focus(), 100);
   }
+}
+
+// 상세 정보 객관식: 같은 항목명(예: 정지)의 다른 단어 값을 오답으로 우선 사용
+function renderDetailOptions(current, answer) {
+  const label = current._q.label;
+  const same = [], other = [];
+  words.forEach(o => {
+    if (o.id === current.id) return;
+    (o.details || []).forEach(d => {
+      if (d.value === answer) return;
+      (d.label === label ? same : other).push(d.value);
+    });
+  });
+  const uniq = arr => [...new Set(arr)];
+  let wrong = shuffle(uniq(same)).slice(0, 3);
+  if (wrong.length < 3) wrong = wrong.concat(shuffle(uniq(other).filter(v => !wrong.includes(v))).slice(0, 3 - wrong.length));
+  // 같은 단어의 다른 항목 값도 최후의 보루로 사용
+  if (wrong.length < 3) {
+    const own = (current.details || []).map(d => d.value).filter(v => v !== answer && !wrong.includes(v));
+    wrong = wrong.concat(own.slice(0, 3 - wrong.length));
+  }
+  const allOpts = shuffle([answer, ...wrong]);
+  document.getElementById('mcArea').innerHTML = allOpts.map(opt => `
+    <button class="option-choice" data-answer="${escHtml(answer)}" data-opt="${escHtml(opt)}" style="white-space:pre-line;text-align:left">${escHtml(opt)}</button>
+  `).join('');
+  document.querySelectorAll('#mcArea .option-choice').forEach(btn => {
+    btn.addEventListener('click', () => checkMC(btn, btn.dataset.answer, btn.dataset.opt));
+  });
 }
 
 // BUG-B: 단어 4개 미만 시 주관식 자동 전환 + 다른 폴더 단어 오답 보기 우선
@@ -4350,6 +4477,12 @@ function showHint() {
   const hintPanel   = document.getElementById('hintPanel');
   const hintContent = document.getElementById('hintContent');
   const isEn2Kr     = quizConfig.dir === 'en2kr';
+
+  if (quizConfig.dir === 'detail') {
+    const v = (w._q && w._q.value) || '';
+    showToast(`💡 정답은 "${v.slice(0, 2)}"(으)로 시작해요`);
+    return;
+  }
 
   if (isEn2Kr) {
     // ── 영어 → 뜻 모드: 영어 단어를 접사 분석해서 뜻 유추 힌트
@@ -5453,6 +5586,7 @@ document.querySelectorAll('.option-btn').forEach(btn => {
         wrap.style.display = 'none';
       }
     }
+    if (group === 'dir') updateCountOptions();
     if (group === 'pool') {
       updateCountOptions();
       document.getElementById('folderPoolSection').style.display = val === 'folder' ? 'block' : 'none';
@@ -5543,96 +5677,6 @@ document.getElementById('retryWrongBtn').addEventListener('click', () => {
   startQuiz();
 });
 document.getElementById('resultHomeBtn').addEventListener('click', () => showScreen('homeScreen'));
-
-// ═══════════════════════════════════════════════════════════════
-// ── UX-12: 로그/기록 모달 (패치노트 + 피드백)
-// ═══════════════════════════════════════════════════════════════
-
-// 패치노트 첫 실행 뱃지 초기화
-function initLogBadge() {
-  const seen = localStorage.getItem('medlex_log_seen');
-  const badge = document.getElementById('logBadge');
-  if (!seen) {
-    badge.style.display = 'block';
-  } else {
-    badge.style.display = 'none';
-  }
-}
-
-function openLogModal() {
-  document.getElementById('logOverlay').classList.add('open');
-  // 뱃지 숨기기 + seen 저장
-  localStorage.setItem('medlex_log_seen', '1');
-  document.getElementById('logBadge').style.display = 'none';
-  renderFeedbackList();
-}
-
-function closeLogModal() {
-  document.getElementById('logOverlay').classList.remove('open');
-}
-
-// 로그 탭 전환
-document.querySelectorAll('.log-tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.log-tab').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.log-tab-content').forEach(c => c.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('ltab-' + btn.dataset.ltab).classList.add('active');
-  });
-});
-
-// 로그 모달 열기/닫기 이벤트
-document.getElementById('logBtn').addEventListener('click', openLogModal);
-document.getElementById('logClose').addEventListener('click', closeLogModal);
-document.getElementById('logOverlay').addEventListener('click', e => {
-  if (e.target === document.getElementById('logOverlay')) closeLogModal();
-});
-
-// ── 피드백 저장/삭제/렌더링 ──
-//
-//사실 요즘 누가 피드백 씀? 싶긴 한데... 일단 구현은 해뒀습니다. UX-12: 피드백 기록 기능 추가
-function loadFeedbacks() {
-  try { return JSON.parse(localStorage.getItem('medlex_logs') || '[]'); } catch { return []; }
-}
-function saveFeedbacks(list) { localStorage.setItem('medlex_logs', JSON.stringify(list)); }
-
-function renderFeedbackList() {
-  const list = loadFeedbacks();
-  const el = document.getElementById('feedbackList');
-  if (!list.length) {
-    el.innerHTML = '<div style="color:var(--text3);font-size:13px;text-align:center;padding:20px">아직 기록이 없어요</div>';
-    return;
-  }
-  el.innerHTML = list.map((item, i) => `
-    <div class="feedback-item">
-      <button class="feedback-item-del" onclick="deleteFeedback(${i})">✕ 삭제</button>
-      <div class="feedback-item-date">${escHtml(item.date)}</div>
-      <div class="feedback-item-text">${escHtml(item.text)}</div>
-    </div>
-  `).join('');
-}
-
-function deleteFeedback(idx) {
-  const list = loadFeedbacks();
-  list.splice(idx, 1);
-  saveFeedbacks(list);
-  renderFeedbackList();
-  showToast('기록이 삭제됐어요');
-}
-
-document.getElementById('feedbackSaveBtn').addEventListener('click', () => {
-  const textarea = document.getElementById('feedbackInput');
-  const text = textarea.value.trim();
-  if (!text) { showToast('내용을 입력해주세요'); return; }
-  const list = loadFeedbacks();
-  const now = new Date();
-  const date = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-  list.unshift({ date, text }); // 최신순 (앞에 추가)
-  saveFeedbacks(list);
-  textarea.value = '';
-  renderFeedbackList();
-  showToast('기록이 저장됐어요 💾');
-});
 
 
 // ═══════════════════════════════════════════════════════════════
@@ -5837,11 +5881,11 @@ document.addEventListener('keydown', e => {
 // ═══════════════════════════════════════════════════════════════
 load();
 loadUserAffixes();
+renderChipSettings();
 renderWordList();
 renderFolderSelects();
 updateShortcutBadges();
 initAnalyzeTabs();
-initLogBadge(); // UX-12: 첫 실행 시 패치노트 뱃지 표시
 
 // 툴팁 투어 — 첫 방문자에게만 자동 실행
 setTimeout(() => tourStart(), 800);
@@ -5853,6 +5897,83 @@ document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'hidden') saveAll();
 });
 
+// ai 95% 그리고 나의 힘 나머지 5%로 이 프로젝트를 완성했다... ai 님 굉장해~
+// 주석도 친절히 달아주시고 코드도 깔끔하게 리팩토링해주시고... 정말 감사합니다! 🙏✨
+// 사실 ai가 다 해서 남 앞에서 내가 만들었다고 하기에는 조금 죄책감이 들긴 하는데... 그래도 내가 기획하고 구조 잡고 ai가 코딩한 거니까 어느 정도는 내 공도 있다고 생각하기로 했습니다
+// 영화 감독도 촬영기사, 편집기사, 음향기사 등 수많은 스태프들과 협업해서 영화를 만들잖아요?
+
+</script>
+
+<script>
+// ── UX 개선 패치: 카드 메뉴 / FAB 스크롤 / 뜻 가리기 / 안내 ──
+(function () {
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  };
+
+  // 카드 ⋯ 메뉴
+  const menu = document.createElement('div');
+  menu.className = 'card-menu'; menu.id = 'cardMenu'; menu.setAttribute('role', 'menu');
+  menu.innerHTML = '<button type="button" role="menuitem" data-act="edit">✏️ 수정</button>' +
+                   '<button type="button" role="menuitem" data-act="del" class="danger">🗑️ 삭제</button>';
+  document.body.appendChild(menu);
+  let menuId = null;
+  const noop = { stopPropagation() {} };
+
+  function closeMenu() { menu.classList.remove('open'); menuId = null; }
+  window.openCardMenu = function (e, id) {
+    e.stopPropagation();
+    if (menu.classList.contains('open') && menuId === id) { closeMenu(); return; }
+    menuId = id;
+    menu.classList.add('open');
+    const r = e.currentTarget.getBoundingClientRect();
+    const mw = menu.offsetWidth, mh = menu.offsetHeight;
+    let left = Math.min(Math.max(8, r.right - mw), window.innerWidth - mw - 8);
+    let top = r.bottom + 4;
+    if (top + mh > window.innerHeight - 72) top = r.top - mh - 4; // 하단 탭 위로 뒤집기
+    menu.style.left = left + 'px';
+    menu.style.top = Math.max(8, top) + 'px';
+  };
+  menu.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-act]'); if (!btn) return;
+    const id = menuId; closeMenu();
+    if (btn.dataset.act === 'edit') editWord(noop, id);
+    else deleteWord(noop, id); // 기존 확인 다이얼로그 그대로 사용
+  });
+  document.addEventListener('click', (e) => { if (!e.target.closest('#cardMenu')) closeMenu(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
+
+  // 스크롤: FAB 숨김/복귀, 메뉴 닫기
+  const fab = document.getElementById('fabAdd');
+  let lastY = window.scrollY, idle = null;
+  document.addEventListener('scroll', (e) => {
+    closeMenu();
+    const y = window.scrollY;
+    if (fab && y > lastY + 6 && y > 120) fab.classList.add('fab-hidden');
+    else if (fab && y < lastY - 6) fab.classList.remove('fab-hidden');
+    lastY = y;
+    clearTimeout(idle);
+    idle = setTimeout(() => fab && fab.classList.remove('fab-hidden'), 700);
+  }, { passive: true, capture: true });
+
+  // 뜻 가리기
+  const list = document.getElementById('wordList');
+  const toggle = document.getElementById('meaningToggle');
+  function setHide(on) {
+    list.classList.toggle('hide-meaning', on);
+    toggle.setAttribute('aria-pressed', String(on));
+    store.set('medlex_hide_meaning', on ? '1' : '0');
+  }
+  toggle.addEventListener('click', () => setHide(!list.classList.contains('hide-meaning')));
+  if (store.get('medlex_hide_meaning') === '1') setHide(true);
+
+  // 첫 사용 안내
+  const hint = document.getElementById('flipHint');
+  window.dismissFlipHint = function () { if (!hint.hidden) { hint.hidden = true; store.set('medlex_flip_hint', '1'); } };
+  document.getElementById('flipHintClose').addEventListener('click', window.dismissFlipHint);
+  if (store.get('medlex_flip_hint') !== '1') hint.hidden = false;
+})();
 </script>
 </body>
 </html>
