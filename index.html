@@ -1369,6 +1369,17 @@ body {
 .card-menu button:hover { background: var(--surface2); }
 .card-menu button.danger { color: var(--danger); }
 @media (prefers-reduced-motion: reduce) { .fab, .card-meaning { transition: none; } }
+
+  /* ═══ V2 테스트: 홈 히어로 이식 ═══ */
+  .today-hero{margin:12px 16px 4px;padding:16px 18px;border-radius:var(--radius);background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:var(--shadow)}
+  .th-label{font-size:12px;opacity:.85;font-weight:500}
+  .th-num{font-family:'DM Serif Display',serif;font-size:40px;line-height:1.05}
+  .th-num small{font-size:15px;font-family:'DM Sans',sans-serif;margin-left:4px;opacity:.9}
+  .th-sub{font-size:12px;opacity:.85;margin-top:2px}
+  .th-side{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+  .th-streak{font-size:13px;font-weight:600}
+  .th-btn{border:none;border-radius:20px;padding:11px 22px;background:#fff;color:var(--accent);font-size:15px;font-weight:700;font-family:inherit;cursor:pointer}
+  .th-btn:active{transform:scale(.96)}
 </style>
 </head>
 <body>
@@ -1388,6 +1399,17 @@ body {
        홈 화면 — 단어장 목록
   ══════════════════════════════════════ -->
   <div class="screen active" id="homeScreen">
+    <div class="today-hero" id="todayHero">
+      <div>
+        <div class="th-label">오늘 복습할 단어</div>
+        <div class="th-num"><span id="thDue">0</span><small>개</small></div>
+        <div class="th-sub" id="thSub"></div>
+      </div>
+      <div class="th-side">
+        <div class="th-streak">🔥 <span id="thStreak">0</span>일 연속</div>
+        <button class="th-btn" id="thStart">복습 시작</button>
+      </div>
+    </div>
     <div class="search-bar">
       <span class="search-icon">🔍</span>
       <input type="text" id="searchInput" placeholder="영어, 뜻, 상세 정보로 검색... (/)">
@@ -5974,6 +5996,24 @@ document.addEventListener('visibilitychange', () => {
   document.getElementById('flipHintClose').addEventListener('click', window.dismissFlipHint);
   if (store.get('medlex_flip_hint') !== '1') hint.hidden = false;
 })();
+
+  // ═══ V2 테스트: 홈 히어로 ═══
+  function updateHero(){
+    try{
+      const learned=words.filter(w=>w.lastLearned);
+      const due=learned.filter(w=>getRetention(w)<0.7).length;
+      const fresh=words.length-learned.length;
+      document.getElementById('thDue').textContent=due;
+      document.getElementById('thSub').textContent=`새 단어 ${fresh}개 · 전체 ${words.length}개`;
+      document.getElementById('thStreak').textContent=calcStreak();
+    }catch(e){}
+  }
+  document.getElementById('thStart').addEventListener('click',()=>{
+    if(words.length<2){showToast('단어가 2개 이상 필요해요');return;}
+    setupStudyScreen(); startQuiz();
+  });
+  (function(){const _rw=renderWordList;renderWordList=function(){_rw.apply(this,arguments);updateHero();};})();
+  updateHero();
 </script>
 </body>
 </html>
