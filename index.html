@@ -255,7 +255,7 @@ body {
   color: var(--text3); cursor: pointer; display: flex; flex-direction: column;
   align-items: center; gap: 3px; transition: var(--transition); font-family: 'DM Sans', sans-serif;
 }
-.nav-btn .nav-icon { font-size: 20px; transition: var(--transition); }
+.nav-btn .nav-icon { display: flex; transition: var(--transition); }
 .nav-btn .nav-label { font-size: 11px; font-weight: 500; }
 .nav-btn.active { color: var(--accent); }
 .nav-btn.active .nav-icon { transform: scale(1.15); }
@@ -607,7 +607,7 @@ body {
 }
 .bubble-cell:hover { border-color: var(--accent2); transform: translateY(-1px); }
 .bubble-cell.active-cell { border-color: var(--accent); background: var(--accent-light); }
-.bubble-icon { font-size: 22px; flex-shrink: 0; }
+.bubble-icon { font-size: 20px; font-weight: 700; flex-shrink: 0; min-width: 24px; text-align: center; }
 .bubble-info { flex: 1; min-width: 0; }
 .bubble-name { font-size: 13px; font-weight: 600; color: var(--text); }
 .bubble-cnt  { font-size: 11px; color: var(--text3); margin-top: 2px; }
@@ -1054,7 +1054,7 @@ body {
 .confirm-btns { display: flex; gap: 8px; }
 .confirm-btns .btn { flex: 1; padding: 11px 14px; font-size: 13px; }
 
-/* ── UX-12: 로그/기록 모달 ── */
+/* ── 공용 오버레이 패널 (스마트 출제 알고리즘 설명창 등) ── */
 .log-overlay {
   display: none; position: fixed; inset: 0;
   /* PERF-01: blur 제거 */
@@ -1356,6 +1356,13 @@ body {
 .card-back-meaning { line-height: 1.25; }
 .card-back-meaning { font-size: 19px; flex: 0 0 auto; margin-bottom: 6px; }
 
+.ico { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; display: block; }
+.icon-btn .icon-glyph { display: flex; }
+.icon-btn .icon-glyph .ico { width: 18px; height: 18px; }
+.search-bar .search-icon { display: flex; }
+.search-bar .search-icon .ico { width: 16px; height: 16px; }
+.folder-item-edit { width: auto; min-width: 32px; padding: 0 10px; font-size: 12px; }
+
 /* 카드 더보기 메뉴 */
 .card-menu {
   position: fixed; z-index: 150; min-width: 132px; padding: 4px; display: none;
@@ -1371,15 +1378,43 @@ body {
 @media (prefers-reduced-motion: reduce) { .fab, .card-meaning { transition: none; } }
 
   /* ═══ V2 테스트: 홈 히어로 이식 ═══ */
-  .today-hero{margin:12px 16px 4px;padding:16px 18px;border-radius:var(--radius);background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:var(--shadow)}
-  .th-label{font-size:12px;opacity:.85;font-weight:500}
-  .th-num{font-family:'DM Serif Display',serif;font-size:40px;line-height:1.05}
+  .today-hero{margin:10px 16px 0;padding:12px 16px;border-radius:var(--radius);background:#2d6a4f;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:var(--shadow)}
+  .th-label{font-size:12px;opacity:.92;font-weight:500}
+  .th-num{font-family:'DM Serif Display',serif;font-size:32px;line-height:1.05}
   .th-num small{font-size:15px;font-family:'DM Sans',sans-serif;margin-left:4px;opacity:.9}
-  .th-sub{font-size:12px;opacity:.85;margin-top:2px}
-  .th-side{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+  .th-sub{font-size:12px;opacity:.92;margin-top:2px}
+  .th-side{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
   .th-streak{font-size:13px;font-weight:600}
-  .th-btn{border:none;border-radius:20px;padding:11px 22px;background:#fff;color:var(--accent);font-size:15px;font-weight:700;font-family:inherit;cursor:pointer}
+  .th-btn{border:none;border-radius:20px;padding:9px 20px;background:#fff;color:#2d6a4f;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer}
   .th-btn:active{transform:scale(.96)}
+
+/* 이어서 풀기 배너 */
+.resume-banner { margin: 10px 16px 0; padding: 10px 12px; border-radius: var(--radius-sm); border: 1.5px solid var(--accent); background: var(--accent-light); display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text); }
+.study-setup .resume-banner { margin: 0 0 14px; }
+#todayHero + .resume-banner { margin-bottom: 0; }
+.resume-banner[hidden] { display: none; }
+.resume-banner .rb-text { flex: 1; line-height: 1.4; }
+.resume-banner .rb-text small { display: block; color: var(--text2); font-size: 12px; }
+.resume-banner .rb-go { border: none; border-radius: 20px; padding: 8px 14px; background: var(--accent); color: #fff; font-size: 13px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; white-space: nowrap; }
+.resume-banner .rb-drop { border: none; background: transparent; color: var(--text2); font-size: 12px; font-family: 'DM Sans', sans-serif; cursor: pointer; padding: 8px 6px; white-space: nowrap; }
+.resume-banner button:focus-visible { outline: 2px solid var(--accent2); outline-offset: 2px; }
+
+/* 일괄 추가 + 되돌리기 */
+.bulk-link { background: none; border: none; padding: 0; margin: -6px 0 14px; color: var(--accent); font-size: 13px; font-weight: 600; font-family: 'DM Sans', sans-serif; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.bulk-link[hidden] { display: none; }
+.bulk-textarea { width: 100%; min-height: 170px; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface2); color: var(--text); font-size: 14px; line-height: 1.6; font-family: 'DM Sans', sans-serif; resize: vertical; outline: none; box-sizing: border-box; }
+.bulk-textarea:focus { border-color: var(--accent2); background: var(--surface); }
+.bulk-hint { margin-top: 6px; font-size: 12px; line-height: 1.5; color: var(--text2); }
+.bulk-check { display: flex; align-items: center; gap: 8px; margin: 2px 0 12px; font-size: 13px; color: var(--text); cursor: pointer; }
+.bulk-summary { min-height: 20px; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: var(--text); }
+.bulk-errors { margin-bottom: 14px; font-size: 12px; line-height: 1.6; color: var(--danger); word-break: break-all; }
+.bulk-errors:empty { display: none; }
+.undo-snack { position: fixed; left: 50%; bottom: calc(148px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 12px); width: min(calc(100% - 32px), 420px); box-sizing: border-box; display: flex; align-items: center; gap: 12px; padding: 8px 8px 8px 16px; border-radius: 12px; background: #2a2f2c; color: #f1efe9; font-size: 14px; z-index: 140; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; box-shadow: 0 6px 24px rgba(0,0,0,.28); }
+.undo-snack.show { opacity: 1; pointer-events: auto; transform: translate(-50%, 0); }
+.undo-snack .us-msg { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.undo-snack .us-btn { border: none; background: transparent; color: #74c69d; font-size: 14px; font-weight: 700; font-family: 'DM Sans', sans-serif; padding: 8px 12px; border-radius: 8px; cursor: pointer; white-space: nowrap; }
+.undo-snack .us-btn:focus-visible { outline: 2px solid #74c69d; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .undo-snack { transition: none; } }
 </style>
 </head>
 <body>
@@ -1388,9 +1423,9 @@ body {
   <!-- ── 헤더 ── -->
   <header class="header">
     <div class="header-logo">MedLex <span>V-alpha</span></div>
-    <button class="icon-btn labeled" id="fileStatusBtn" title="파일 저장 상태" aria-label="파일 저장 상태"><span class="icon-glyph">💾</span><span class="icon-label">저장</span></button>
+    <button class="icon-btn labeled" id="fileStatusBtn" title="파일 저장 상태" aria-label="파일 저장 상태"><span class="icon-glyph"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg></span><span class="icon-label">저장</span></button>
     <button class="icon-btn labeled" id="settingsBtn" title="설정" aria-label="설정" style="position:relative">
-      <span class="icon-glyph">⚙️</span><span class="icon-label">설정</span>
+      <span class="icon-glyph"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21v-7"/><path d="M4 10V3"/><path d="M12 21v-9"/><path d="M12 8V3"/><path d="M20 21v-5"/><path d="M20 12V3"/><path d="M1 14h6"/><path d="M9 8h6"/><path d="M17 16h6"/></svg></span><span class="icon-label">설정</span>
       <span class="kbd-badge" id="kbdSettings"></span>
     </button>
   </header>
@@ -1406,17 +1441,17 @@ body {
         <div class="th-sub" id="thSub"></div>
       </div>
       <div class="th-side">
-        <div class="th-streak">🔥 <span id="thStreak">0</span>일 연속</div>
+        <div class="th-streak"><span id="thStreak">0</span>일 연속</div>
         <button class="th-btn" id="thStart">복습 시작</button>
       </div>
     </div>
     <div class="search-bar">
-      <span class="search-icon">🔍</span>
+      <span class="search-icon"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7.5"/><path d="m21 21-4.3-4.3"/></svg></span>
       <input type="text" id="searchInput" placeholder="영어, 뜻, 상세 정보로 검색... (/)">
     </div>
     <div class="folder-bar">
       <select class="folder-select" id="folderFilter">
-        <option value="all">📁 모든 폴더</option>
+        <option value="all">모든 폴더</option>
       </select>
       <button class="folder-manage-btn" id="folderManageBtn">폴더 관리</button>
     </div>
@@ -1433,12 +1468,12 @@ body {
       <div class="filter-tabs">
         <button class="filter-tab active" data-filter="all">전체</button>
         <button class="filter-tab" data-filter="fav">★ 즐겨찾기</button>
-        <button class="filter-tab" data-filter="review">🔥 복습 필요</button>
+        <button class="filter-tab" data-filter="review">복습 필요</button>
         <button class="meaning-toggle" id="meaningToggle" aria-pressed="false" title="뜻을 흐리게 가려서 스스로 테스트해요">뜻 가리기</button>
       </div>
     </div>
     <div class="flip-hint" id="flipHint" hidden>
-      <span>카드를 탭하면 뒷면에서 기억 에너지를 볼 수 있어요. <b>뜻 가리기</b>로 스스로 테스트해 보세요.</span>
+      <span>카드를 탭하면 뒷면과 <b>기억 에너지</b>를 볼 수 있어요.</span>
       <button type="button" id="flipHintClose" aria-label="안내 닫기">✕</button>
     </div>
     <div class="word-list" id="wordList"></div>
@@ -1454,14 +1489,14 @@ body {
 
       <!-- UX-15: 모드 선택 (외우기 / 퀴즈) -->
       <div class="mode-selector study-type-section">
-        <button class="mode-btn active" id="modeMemoBtn" onclick="setStudyMode('memo')">📖 외우기</button>
-        <button class="mode-btn" id="modeQuizBtn" onclick="setStudyMode('quiz')">✏️ 퀴즈</button>
+        <button class="mode-btn active" id="modeMemoBtn" onclick="setStudyMode('memo')">외우기</button>
+        <button class="mode-btn" id="modeQuizBtn" onclick="setStudyMode('quiz')">퀴즈</button>
       </div>
 
       <!-- 퀴즈 전용 옵션 (외우기 모드에서 숨김) -->
       <div id="quizOnlyOptions">
         <div class="setup-section">
-          <div class="setup-section-title">📝 문제 유형</div>
+          <div class="setup-section-title">문제 유형</div>
           <div class="option-grid cols3">
             <button class="option-btn selected" data-group="type" data-val="mc">객관식</button>
             <button class="option-btn" data-group="type" data-val="subj">주관식</button>
@@ -1469,16 +1504,16 @@ body {
           </div>
         </div>
         <div class="setup-section">
-          <div class="setup-section-title">🔄 문제 방향</div>
+          <div class="setup-section-title">문제 방향</div>
           <div class="option-grid">
             <button class="option-btn selected" data-group="dir" data-val="en2kr">영어 → 뜻</button>
             <button class="option-btn" data-group="dir" data-val="kr2en">뜻 → 영어</button>
-            <button class="option-btn" data-group="dir" data-val="detail" style="grid-column:1/-1">📝 상세 정보 (기시·정지·신경·작용 등, 객관식)</button>
+            <button class="option-btn" data-group="dir" data-val="detail" style="grid-column:1/-1">상세 정보 (기시·정지·신경·작용 등, 객관식)</button>
           </div>
         </div>
       </div>
       <div class="setup-section">
-        <div class="setup-section-title">🔢 문제 개수</div>
+        <div class="setup-section-title">문제 개수</div>
         <div class="option-grid" id="countOptions">
           <button class="option-btn" data-group="count" data-val="20">20문제</button>
           <button class="option-btn" data-group="count" data-val="40">40문제</button>
@@ -1497,7 +1532,7 @@ body {
         </div>
       </div>
       <div class="setup-section">
-        <div class="setup-section-title">⭐ 대상 단어</div>
+        <div class="setup-section-title">대상 단어</div>
         <div class="option-grid" id="poolOptions">
           <button class="option-btn selected" data-group="pool" data-val="all">전체 단어</button>
           <button class="option-btn" data-group="pool" data-val="fav">즐겨찾기만</button>
@@ -1507,8 +1542,8 @@ body {
       </div>
       <!-- 폴더 선택 (pool=folder일 때 표시) -->
       <div class="setup-section" id="folderPoolSection" style="display:none">
-        <div class="setup-section-title">📁 퀴즈 폴더 선택</div>
-        <select class="form-select" id="quizFolderSelect" style="background:var(--surface)"></select>
+        <div class="setup-section-title">퀴즈 폴더 선택</div>
+        <select class="form-select" id="quizFolderSelect" aria-label="퀴즈 폴더 선택" style="background:var(--surface)"></select>
       </div>
       <div class="setup-section" id="wrongOnlySection" style="display:none">
         <div class="checkbox-row" id="wrongOnlyToggle">
@@ -1517,7 +1552,7 @@ body {
         </div>
       </div>
       <div class="setup-section">
-        <div class="setup-section-title">🧠 출제 알고리즘</div>
+        <div class="setup-section-title">출제 알고리즘</div>
         <div class="checkbox-row checked" id="smartModeToggle">
           <div class="custom-checkbox" id="smartCheckbox" style="background:var(--accent);border-color:var(--accent)">✓</div>
           <div style="flex:1">
@@ -1525,11 +1560,11 @@ body {
             <div style="font-size:11px;color:var(--text3);margin-top:2px">망각 위험군 + 미학습 단어를 우선 출제</div>
           </div>
           <!-- UX-14: 알고리즘 설명 버튼 -->
-          <button id="algoInfoBtn" style="flex-shrink:0;width:28px;height:28px;border-radius:50%;
+          <button id="algoInfoBtn" aria-label="스마트 출제 알고리즘 설명" style="flex-shrink:0;width:28px;height:28px;border-radius:50%;
             border:1.5px solid var(--border);background:var(--surface2);
             color:var(--accent);font-size:14px;cursor:pointer;
             display:flex;align-items:center;justify-content:center;transition:var(--transition)"
-            onclick="event.stopPropagation();openAlgoInfo()">ℹ️</button>
+            onclick="event.stopPropagation();openAlgoInfo()"></button>
         </div>
       </div>
       <button class="start-btn" id="startStudyBtn" style="position:relative">
@@ -1552,9 +1587,9 @@ body {
         </div>
       </div>
       <div class="memo-progress">
-        <span id="memoKnewCount" style="color:#2e7d32;font-weight:700">✅ 0</span>
+        <span id="memoKnewCount" style="color:#2e7d32;font-weight:700">✓ 0</span>
         <div class="memo-prog-bar"><div class="memo-prog-fill" id="memoProgFill" style="width:0%"></div></div>
-        <span id="memoForgotCount" style="color:#c62828;font-weight:700">❌ 0</span>
+        <span id="memoForgotCount" style="color:#c62828;font-weight:700">✗ 0</span>
       </div>
       <!-- 외우기 카드 -->
       <div class="memo-card" id="memoCard" onclick="flipMemoCard()">
@@ -1563,7 +1598,7 @@ body {
             <div class="memo-front-label">외우기 모드</div>
             <div class="memo-term" id="memoTerm">—</div>
             <div class="memo-pron" id="memoPron"></div>
-            <div class="memo-tap-hint">탭하면 뜻이 보여요 👆</div>
+            <div class="memo-tap-hint">탭하면 뜻이 보여요</div>
           </div>
           <div class="memo-back">
             <div class="memo-front-label">뜻</div>
@@ -1576,11 +1611,11 @@ body {
       <!-- 알았다 / 몰랐다 버튼 (카드 뒤집은 후 표시) -->
       <div class="memo-judge-btns" id="memoJudgeBtns" style="display:none">
         <button class="memo-judge-btn forgot" onclick="judgeMemo(false)">
-          ❌ 몰랐다
+          몰랐다
           <span class="memo-judge-sub">덱 뒤에 다시 추가</span>
         </button>
         <button class="memo-judge-btn knew" onclick="judgeMemo(true)">
-          ✅ 알았다
+          알았다
           <span class="memo-judge-sub">반감기 소폭 상승</span>
         </button>
       </div>
@@ -1614,13 +1649,13 @@ body {
       <div id="subjArea" class="subjective-area" style="display:none">
         <input class="subj-input" id="subjInput" type="text" placeholder="정답을 입력하세요...">
         <div class="hint-panel" id="hintPanel">
-          <div class="hint-panel-title">💡 접사 힌트</div>
+          <div class="hint-panel-title">접사 힌트</div>
           <div id="hintContent"></div>
         </div>
         <div class="subj-feedback" id="subjFeedback"></div>
         <div class="subj-buttons">
           <button class="btn btn-secondary" id="hintBtn" style="position:relative">
-            💡 힌트
+            힌트
             <span class="kbd-badge" id="kbdHint"></span>
           </button>
           <button class="btn btn-primary" id="subjSubmit" style="flex:2;position:relative">
@@ -1651,7 +1686,7 @@ body {
       </div>
       <div id="resultNewMastered" style="display:none;background:var(--gold-light);border:1.5px solid var(--gold);border-radius:var(--radius);padding:14px;margin-bottom:16px"></div>
       <div id="wrongListWrap">
-        <div class="result-section-title">❌ 틀린 단어 복습</div>
+        <div class="result-section-title">틀린 단어 복습</div>
         <div class="wrong-list" id="wrongList"></div>
       </div>
       <div class="result-actions">
@@ -1687,7 +1722,7 @@ body {
         </div>
         <div class="trio-card trio-gold">
           <div class="trio-value" id="statMastered">0</div>
-          <div class="trio-label">마스터 🏆</div>
+          <div class="trio-label">마스터</div>
         </div>
       </div>
 
@@ -1709,7 +1744,7 @@ body {
 
       <!-- ③ 누적 정답률 게이지 -->
       <div class="stat-section">
-        <div class="stat-section-title">🎯 누적 정답률</div>
+        <div class="stat-section-title">누적 정답률</div>
         <div class="gauge-wrap">
           <div class="gauge-track">
             <div class="gauge-fill" id="gaugeAccuracy"></div>
@@ -1721,19 +1756,19 @@ body {
 
       <!-- ④ 지식 확률 추이 (꺾은선) -->
       <div class="stat-section">
-        <div class="stat-section-title">📈 지식 확률 추이 <span class="stat-section-sub">최근 14일</span></div>
+        <div class="stat-section-title">지식 확률 추이 <span class="stat-section-sub">최근 14일</span></div>
         <div class="knowledge-chart-inner" id="knowledgeChart"></div>
       </div>
 
       <!-- ⑤ 스트릭 캘린더 (최근 4주) -->
       <div class="stat-section">
-        <div class="stat-section-title">📅 학습 캘린더 <span class="stat-section-sub">최근 28일</span></div>
+        <div class="stat-section-title">학습 캘린더 <span class="stat-section-sub">최근 28일</span></div>
         <div class="streak-calendar" id="streakCalendar"></div>
       </div>
 
       <!-- ⑥ 취약 단어 — 정오 흐름 포함 -->
       <div class="stat-section" style="margin-bottom:80px">
-        <div class="stat-section-title">💀 취약 단어 TOP 5</div>
+        <div class="stat-section-title">취약 단어 TOP 5</div>
         <div id="weakList"></div>
       </div>
     </div>
@@ -1752,7 +1787,7 @@ body {
         <button class="analyze-tab active" data-atab="bubble">계통 분포</button>
         <button class="analyze-tab" data-atab="affix">접사 분포</button>
         <button class="analyze-tab" data-atab="mindmap">마인드맵</button>
-        <button class="analyze-tab" data-atab="dict">📖 사전</button>
+        <button class="analyze-tab" data-atab="dict">사전</button>
       </div>
 
       <!-- 계통 버블 뷰 -->
@@ -1833,19 +1868,19 @@ body {
   <!-- ── 하단 내비게이션 ── -->
   <nav class="bottom-nav">
     <button class="nav-btn active" id="navHome" style="position:relative">
-      <span class="nav-icon">📚</span><span class="nav-label">단어장</span>
+      <span class="nav-icon"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H2z"/><path d="M22 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z"/></svg></span><span class="nav-label">단어장</span>
       <span class="kbd-badge" id="kbdHome"></span>
     </button>
     <button class="nav-btn" id="navStudy" style="position:relative">
-      <span class="nav-icon">✏️</span><span class="nav-label">학습</span>
+      <span class="nav-icon"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/><path d="m15 5 4 4"/></svg></span><span class="nav-label">학습</span>
       <span class="kbd-badge" id="kbdStudy"></span>
     </button>
     <button class="nav-btn" id="navStats" style="position:relative">
-      <span class="nav-icon">📊</span><span class="nav-label">통계</span>
+      <span class="nav-icon"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg></span><span class="nav-label">통계</span>
       <span class="kbd-badge" id="kbdStats"></span>
     </button>
     <button class="nav-btn" id="navAnalyze" style="position:relative">
-      <span class="nav-icon">🔬</span><span class="nav-label">분석</span>
+      <span class="nav-icon"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 2v7.5a2 2 0 0 1-.2.9L4.7 20.5a1 1 0 0 0 .9 1.5h12.8a1 1 0 0 0 .9-1.5l-5.1-10.1a2 2 0 0 1-.2-.9V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg></span><span class="nav-label">분석</span>
       <span class="kbd-badge" id="kbdAnalyze"></span>
     </button>
   </nav>
@@ -1862,6 +1897,7 @@ body {
   <div class="modal-overlay" id="wordModal">
     <div class="modal">
       <div class="modal-title" id="modalTitle">단어 추가</div>
+      <button type="button" class="bulk-link" id="openBulkBtn">여러 개 한 번에 추가</button>
       <div class="form-group">
         <label class="form-label">영어 (의학용어) *</label>
         <!-- BUGFIX: 길이 제한 없어 극단적으로 긴 입력 시 카드 레이아웃 붕괴 및
@@ -1871,7 +1907,7 @@ body {
       </div>
       <!-- 접사 자동 분석 패널 -->
       <div class="affix-panel" id="affixPanel">
-        <div class="affix-panel-title">🔬 접사 분석 결과</div>
+        <div class="affix-panel-title">접사 분석 결과</div>
         <div class="affix-chips" id="affixChips"></div>
         <div class="affix-suggestion" id="affixSuggestion"></div>
         <div id="affixFolderSuggest"></div>
@@ -1885,7 +1921,7 @@ body {
         <input class="form-input" id="inputPron" placeholder="예: 카디오메갈리" maxlength="150">
       </div>
       <div class="form-group">
-        <label class="form-label">📁 폴더</label>
+        <label class="form-label">폴더</label>
         <select class="form-select" id="inputFolder">
           <option value="">폴더 없음</option>
         </select>
@@ -1907,7 +1943,7 @@ body {
   ══════════════════════════════════════ -->
   <div class="modal-overlay" id="folderModal">
     <div class="modal">
-      <div class="modal-title">📁 폴더 관리</div>
+      <div class="modal-title">폴더 관리</div>
       <div class="folder-list" id="folderList"></div>
       <div class="folder-add-form">
         <input type="text" id="newFolderInput" placeholder="새 폴더 이름 입력..." maxlength="40">
@@ -1924,7 +1960,7 @@ body {
   <div class="assign-modal-overlay" id="assignModal">
     <div class="assign-modal">
       <div class="assign-modal-header">
-        <div class="assign-modal-title" id="assignModalTitle">📁 폴더에 단어 추가</div>
+        <div class="assign-modal-title" id="assignModalTitle">폴더에 단어 추가</div>
         <button onclick="closeAssignModal()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--text3);">✕</button>
       </div>
       <div class="assign-modal-toolbar">
@@ -1950,10 +1986,10 @@ body {
         <button class="settings-close" id="settingsClose">✕</button>
       </div>
       <div class="settings-tabs">
-        <button class="settings-tab active" data-tab="shortcuts">⌨️ 단축키</button>
-        <button class="settings-tab" data-tab="prefs">🖥️ 환경설정</button>
-        <button class="settings-tab" data-tab="storage">💾 저장소</button>
-        <button class="settings-tab" data-tab="actions">📂 데이터</button>
+        <button class="settings-tab active" data-tab="shortcuts">단축키</button>
+        <button class="settings-tab" data-tab="prefs">환경설정</button>
+        <button class="settings-tab" data-tab="storage">저장소</button>
+        <button class="settings-tab" data-tab="actions">데이터</button>
       </div>
       <div class="settings-body">
 
@@ -1966,7 +2002,7 @@ body {
           <button class="shortcut-reset-btn" id="resetShortcutsBtn">↺ 단축키 기본값으로 초기화</button>
           <div style="margin-top:16px;padding:10px 14px;background:var(--surface2);border-radius:var(--radius-sm);border:1.5px solid var(--border)">
             <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
-              <span style="font-size:13px;font-weight:500;color:var(--text)">🏷️ 버튼에 단축키 표시</span>
+              <span style="font-size:13px;font-weight:500;color:var(--text)">버튼에 단축키 표시</span>
               <button class="toggle-switch" id="showShortcutsToggle"></button>
             </label>
           </div>
@@ -1975,27 +2011,28 @@ body {
         <!-- 환경설정 탭 -->
         <div class="settings-tab-content" id="tab-prefs">
           <div class="pref-section">
-            <div class="pref-section-title">❓ 도움말</div>
+            <div class="pref-section-title">도움말</div>
             <button class="settings-action-btn" style="width:100%;padding:12px;font-size:13px;" onclick="tourStart(true); closeSettings();">
-              🗺️ 기능 투어 다시 보기
+              기능 투어 다시 보기
             </button>
+            <div style="font-size:12px;color:var(--text2);margin-top:10px;text-align:center">피드백·문의: <a href="mailto:medlexjw@gmail.com" style="color:var(--accent)">medlexjw@gmail.com</a></div>
           </div>
           <div class="pref-section">
-            <div class="pref-section-title">🖥️ 화면 레이아웃</div>
+            <div class="pref-section-title">화면 레이아웃</div>
             <div class="pref-btn-group">
               <button class="pref-btn" id="layoutMobileBtn" data-layout="mobile" onclick="setLayout('mobile')">
-                <span class="pref-btn-icon">📱</span>모바일
+                모바일
                 <div style="font-size:10px;color:var(--text3);margin-top:3px">좁은 화면 최적화</div>
               </button>
               <button class="pref-btn" id="layoutDesktopBtn" data-layout="desktop" onclick="setLayout('desktop')">
-                <span class="pref-btn-icon">🖥️</span>데스크탑
+                데스크탑
                 <div style="font-size:10px;color:var(--text3);margin-top:3px">넓은 화면 최적화</div>
               </button>
             </div>
-            <div class="layout-warning" id="layoutWarning">⚠️ <b>데스크탑 모드</b>로 전환됩니다. 모바일에서는 UI가 어색할 수 있어요.</div>
+            <div class="layout-warning" id="layoutWarning"><b>데스크탑 모드</b>로 전환됩니다. 모바일에서는 UI가 어색할 수 있어요.</div>
           </div>
           <div class="pref-section">
-            <div class="pref-section-title">🌙 다크모드</div>
+            <div class="pref-section-title">다크모드</div>
             <div style="padding:12px 14px;background:var(--surface2);border-radius:var(--radius-sm);border:1.5px solid var(--border)">
               <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
                 <span style="font-size:13px;font-weight:500;color:var(--text)">다크 모드</span>
@@ -2004,7 +2041,7 @@ body {
             </div>
           </div>
           <div class="pref-section">
-            <div class="pref-section-title">📝 상세 정보 항목</div>
+            <div class="pref-section-title">상세 정보 항목</div>
             <div style="font-size:11px;color:var(--text3);margin-bottom:8px">단어 추가 시 탭 한 번으로 넣는 항목명이에요.</div>
             <div class="chip-setting-list" id="chipSettingList"></div>
             <div style="display:flex;gap:8px">
@@ -2017,31 +2054,31 @@ body {
         <!-- 저장소 탭 (새로 추가) -->
         <div class="settings-tab-content" id="tab-storage">
           <div class="pref-section">
-            <div class="pref-section-title">💾 파일 시스템 저장소</div>
+            <div class="pref-section-title">파일 시스템 저장소</div>
             <div class="file-status" id="fileStatusDisplay">
               <div class="file-status-dot" id="fileStatusDot"></div>
               <div class="file-status-name" id="fileStatusName">연결된 파일 없음</div>
             </div>
             <div style="display:flex;flex-direction:column;gap:8px">
               <button class="settings-action-btn" style="width:100%;padding:12px;font-size:13px" onclick="connectJsonFile()">
-                📂 JSON 파일 연결 (기존 데이터 불러오기)
+                JSON 파일 연결 (기존 데이터 불러오기)
               </button>
               <button class="settings-action-btn" style="width:100%;padding:12px;font-size:13px" onclick="createNewJsonFile()">
-                ✨ 새 JSON 파일 생성
+                새 JSON 파일 생성
               </button>
               <button class="settings-action-btn" style="width:100%;padding:12px;font-size:13px" id="saveToFileBtn" onclick="saveToFile()" disabled>
-                💾 지금 파일에 저장
+                지금 파일에 저장
               </button>
             </div>
             <div style="margin-top:14px;padding:10px 14px;background:var(--surface2);border-radius:var(--radius-sm);border:1.5px solid var(--border);font-size:12px;color:var(--text3);line-height:1.7">
-              💡 <b>파일 연결 방법:</b> "JSON 파일 연결"을 눌러 <code>medlex_data.json</code>을 선택하면 데이터가 자동으로 로드됩니다. 단어를 추가/수정할 때마다 LocalStorage와 JSON 파일에 이중 저장됩니다.
+              <b>파일 연결 방법:</b> "JSON 파일 연결"을 눌러 <code>medlex_data.json</code>을 선택하면 데이터가 자동으로 로드됩니다. 단어를 추가/수정할 때마다 LocalStorage와 JSON 파일에 이중 저장됩니다.
             </div>
             <div style="margin-top:8px;padding:10px 14px;background:var(--accent-light);border-radius:var(--radius-sm);border:1.5px solid var(--accent2);font-size:12px;color:var(--accent);line-height:1.7">
-              ⚡ 자동 백업: 단어가 <b>3개 추가</b>될 때마다 JSON 파일이 자동으로 업데이트됩니다.
+              자동 백업: 단어가 <b>3개 추가</b>될 때마다 JSON 파일이 자동으로 업데이트됩니다.
             </div>
           </div>
           <div class="pref-section">
-            <div class="pref-section-title">📊 저장 현황</div>
+            <div class="pref-section-title">저장 현황</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
               <div style="padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border:1.5px solid var(--border);text-align:center">
                 <div style="font-size:20px;font-weight:700;color:var(--accent)" id="storageWordCount">0</div>
@@ -2060,21 +2097,18 @@ body {
           <div class="settings-action-list">
             <div class="settings-action-row">
               <div class="settings-action-label">
-                <span class="sa-icon">📤</span>
                 <div><div>데이터 내보내기</div><div style="font-size:11px;color:var(--text3)">JSON 파일로 백업</div></div>
               </div>
               <button class="settings-action-btn" onclick="exportData()">내보내기</button>
             </div>
             <div class="settings-action-row">
               <div class="settings-action-label">
-                <span class="sa-icon">📥</span>
                 <div><div>데이터 가져오기</div><div style="font-size:11px;color:var(--text3)">JSON 파일에서 불러오기</div></div>
               </div>
               <button class="settings-action-btn" onclick="document.getElementById('fileInput').click()">가져오기</button>
             </div>
             <div class="settings-action-row">
               <div class="settings-action-label">
-                <span class="sa-icon">🗑️</span>
                 <div><div>전체 데이터 삭제</div><div style="font-size:11px;color:var(--text3)">모든 단어와 통계 초기화</div></div>
               </div>
               <button class="settings-action-btn" style="color:var(--danger);border-color:var(--danger)" onclick="clearAllData()">초기화</button>
@@ -2088,39 +2122,39 @@ body {
 
   <!-- 파일 임포트 hidden input -->
   <input type="file" id="fileInput" accept=".json" style="display:none">
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <div class="shortcut-hint-bar" id="shortcutHintBar"></div>
 
   <!-- UX-14: 알고리즘 설명 모달 -->
   <div class="log-overlay" id="algoInfoOverlay">
     <div class="log-panel">
       <div class="log-header">
-        <div class="log-title">🧠 스마트 출제 알고리즘이란?</div>
+        <div class="log-title">스마트 출제 알고리즘이란?</div>
         <button class="log-close" id="algoInfoClose">✕</button>
       </div>
       <div class="log-body" style="padding:20px">
 
         <div style="background:var(--accent-light);border:1.5px solid var(--accent2);border-radius:12px;padding:14px 16px;margin-bottom:16px">
-          <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px">✨ 한 줄 요약</div>
+          <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px">한 줄 요약</div>
           <div style="font-size:13px;color:var(--text);line-height:1.6">
             "지금 가장 까먹을 것 같은 단어"와 "아직 한 번도 안 본 단어"를 먼저 출제해서, 공부 시간 대비 기억 효율을 최대화하는 방식이에요.
           </div>
         </div>
 
         <div style="margin-bottom:20px">
-          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px">📊 BKT — "내가 이 단어를 알고 있을 확률"</div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px">BKT — "내가 이 단어를 알고 있을 확률"</div>
           <div style="font-size:13px;color:var(--text2);line-height:1.7">
             BKT(Bayesian Knowledge Tracing)는 매번 맞히거나 틀릴 때마다 "이 단어를 알 확률"을 0%~100% 사이로 계속 업데이트해요.<br><br>
             예를 들어 처음엔 50%로 시작해서, 맞히면 올라가고 틀리면 내려가는 식이에요.<br>
             단순히 맞힌 횟수를 세는 게 아니라, <b>얼마나 꾸준히 잘 맞히는지</b>를 봐요.
           </div>
           <div style="margin-top:10px;padding:10px 14px;background:var(--surface2);border-radius:8px;font-size:12px;color:var(--text3)">
-            💡 95% 이상이 되면 해당 단어를 "마스터"로 간주해요. 마스터된 단어는 스마트 모드에서 후순위로 밀려나요.
+            95% 이상이 되면 해당 단어를 "마스터"로 간주해요. 마스터된 단어는 스마트 모드에서 후순위로 밀려나요.
           </div>
         </div>
 
         <div style="margin-bottom:20px">
-          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px">⏱️ HALO — "얼마나 오래 기억할 수 있는가"</div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px">HALO — "얼마나 오래 기억할 수 있는가"</div>
           <div style="font-size:13px;color:var(--text2);line-height:1.7">
             HALO(Half-life Adjusted Learning Order)는 <b>기억의 반감기</b>를 추적해요.<br><br>
             빠르게 답했다면 → 확실히 아는 것 → 반감기 길게 (오래 기억함)<br>
@@ -2128,33 +2162,33 @@ body {
             힌트를 쓰고 맞히면 반감기가 거의 늘어나지 않아요. 확실히 아는 게 아니니까요.
           </div>
           <div style="margin-top:10px;padding:10px 14px;background:var(--surface2);border-radius:8px;font-size:12px;color:var(--text3)">
-            💡 반감기가 지날수록 기억 유지율이 떨어져요. 현재 기억 유지율은 단어 카드 뒷면에서 확인할 수 있어요.
+            반감기가 지날수록 기억 유지율이 떨어져요. 현재 기억 유지율은 단어 카드 뒷면에서 확인할 수 있어요.
           </div>
         </div>
 
         <div style="margin-bottom:20px">
-          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px">🎯 두 알고리즘이 합쳐지면?</div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px">두 알고리즘이 합쳐지면?</div>
           <div style="font-size:13px;color:var(--text2);line-height:1.7">
             스마트 모드는 BKT와 HALO를 합산해서 <b>각 단어에 우선순위 점수</b>를 매기고, 점수가 높은 순서대로 출제해요.
           </div>
           <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
             <div style="padding:10px 14px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--danger)">
-              <div style="font-size:12px;font-weight:700;color:var(--danger);margin-bottom:3px">🔴 최우선 출제</div>
+              <div style="font-size:12px;font-weight:700;color:var(--danger);margin-bottom:3px">최우선 출제</div>
               <div style="font-size:12px;color:var(--text2)">기억 유지율이 낮고(반감기 지남) + 아직 덜 아는 단어</div>
             </div>
             <div style="padding:10px 14px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--accent)">
-              <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:3px">🔵 두 번째 출제</div>
+              <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:3px">두 번째 출제</div>
               <div style="font-size:12px;color:var(--text2)">한 번도 학습한 적 없는 새 단어</div>
             </div>
             <div style="padding:10px 14px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--text3)">
-              <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:3px">⚪ 마지막 출제</div>
+              <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:3px">마지막 출제</div>
               <div style="font-size:12px;color:var(--text2)">BKT 95% 이상 마스터 단어 (기억이 탄탄함)</div>
             </div>
           </div>
         </div>
 
         <div style="padding:14px 16px;background:var(--surface2);border-radius:12px;border:1.5px solid var(--border)">
-          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:6px">🏆 마스터 기준이란?</div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:6px">마스터 기준이란?</div>
           <div style="font-size:12px;color:var(--text2);line-height:1.6">
             BKT 확률이 <b>95% 이상</b>이 되면 마스터 단어로 표시돼요. 단어 카드의 숙련도 바가 가득 찬 상태예요.<br>
             마스터 단어도 퀴즈에 나오긴 하지만, 망각 위험 단어보다 나중에 출제돼요.
@@ -2166,6 +2200,29 @@ body {
   </div>
 
   <!-- UX-01: 커스텀 확인 다이얼로그 -->
+  <!-- 일괄 추가 모달 -->
+  <div class="modal-overlay" id="bulkModal" role="dialog" aria-modal="true" aria-labelledby="bulkTitle">
+    <div class="modal">
+      <div class="modal-title" id="bulkTitle">일괄 추가</div>
+      <div class="form-group">
+        <label class="form-label" for="bulkInput">한 줄에 한 단어씩 (영어, 뜻)</label>
+        <textarea class="bulk-textarea" id="bulkInput" spellcheck="false" autocomplete="off" placeholder="kidney, 콩팥&#10;ureter - 요관&#10;urethra : 요도"></textarea>
+        <div class="bulk-hint">구분은 쉼표, 콜론, 띄어쓴 하이픈( - ), 탭(엑셀·표 붙여넣기) 모두 돼요. 가장 먼저 나오는 구분자에서 나누니까 뜻에 쉼표가 있어도 괜찮아요.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="bulkFolder">폴더</label>
+        <select class="form-select" id="bulkFolder"><option value="">폴더 없음</option></select>
+      </div>
+      <label class="bulk-check"><input type="checkbox" id="bulkSkipDup" checked> 이미 있는 단어는 건너뛰기</label>
+      <div class="bulk-summary" id="bulkSummary" aria-live="polite"></div>
+      <div class="bulk-errors" id="bulkErrors"></div>
+      <div class="form-row">
+        <button class="btn btn-secondary" id="bulkCancel">취소</button>
+        <button class="btn btn-primary" id="bulkSave" disabled>추가</button>
+      </div>
+    </div>
+  </div>
+
   <div class="confirm-overlay" id="confirmOverlay">
     <div class="confirm-box">
       <div class="confirm-title" id="confirmTitle">확인</div>
@@ -2835,6 +2892,10 @@ function isValidImportedWord(w) {
 }
 
 // 기억 유지 확률 R = e^(-t/h)
+// 복습 대상 기준 (필터·학습 풀·홈 히어로 공통)
+const REVIEW_THRESHOLD = 0.4;
+function isReviewDue(w) { return !!w.lastLearned && getRetention(w) < REVIEW_THRESHOLD; }
+
 function getRetention(w) {
   if (!w.lastLearned) return 0;
   const t = (Date.now() - w.lastLearned) / 86400000;
@@ -2970,11 +3031,11 @@ async function connectJsonFile() {
         save();
         renderWordList();
         renderFolderSelects();
-        showToast(`✅ ${newWords.length}개 단어 불러오기 완료!`);
+        showToast(`${newWords.length}개 단어 불러오기 완료!`);
       }, { title: '파일 연결', okLabel: '불러오기', danger: false });
     }
     updateFileStatusUI();
-    showToast(`📂 ${handle.name} 연결됨`);
+    showToast(`${handle.name} 연결됨`);
   } catch (e) {
     if (e.name !== 'AbortError') showToast('파일을 열 수 없어요');
   }
@@ -2995,7 +3056,7 @@ async function createNewJsonFile() {
     localStorage.setItem('medlex_file_name', handle.name);
     await writeToFile(handle);
     updateFileStatusUI();
-    showToast(`✨ ${handle.name} 생성됨`);
+    showToast(`${handle.name} 생성됨`);
   } catch (e) {
     if (e.name !== 'AbortError') showToast('파일 생성 실패');
   }
@@ -3022,7 +3083,7 @@ async function writeToFile(handle) {
 async function saveToFile() {
   if (!fileHandle) { showToast('먼저 파일을 연결해주세요'); return; }
   const ok = await writeToFile(fileHandle);
-  if (ok) showToast('💾 파일 저장 완료!');
+  if (ok) showToast('파일 저장 완료!');
 }
 
 // 자동 백업 체크 (단어 3개마다 파일 저장)
@@ -3031,7 +3092,7 @@ async function checkAutoBackup() {
   if (wordsAddedSinceBackup >= 3 && fileHandle) {
     wordsAddedSinceBackup = 0;
     await writeToFile(fileHandle);
-    showToast('🔄 자동 백업 완료');
+    showToast('자동 백업 완료');
   }
 }
 
@@ -3243,17 +3304,17 @@ function setLayout(mode) {
   if (mode === 'desktop' && isMobileDevice && layoutMode !== 'desktop') {
     warning.classList.add('show');
     const btn = document.getElementById('layoutDesktopBtn');
-    btn.innerHTML = `<span class="pref-btn-icon">🖥️</span>데스크탑<div style="font-size:10px;color:var(--text3);margin-top:3px">다시 클릭하여 확인</div>`;
+    btn.innerHTML = `데스크탑<div style="font-size:10px;color:var(--text3);margin-top:3px">다시 클릭하여 확인</div>`;
     btn.setAttribute('data-confirm', '1');
     return;
   }
   warning.classList.remove('show');
-  document.getElementById('layoutDesktopBtn').innerHTML = `<span class="pref-btn-icon">🖥️</span>데스크탑<div style="font-size:10px;color:var(--text3);margin-top:3px">넓은 화면 최적화</div>`;
+  document.getElementById('layoutDesktopBtn').innerHTML = `데스크탑<div style="font-size:10px;color:var(--text3);margin-top:3px">넓은 화면 최적화</div>`;
   document.getElementById('layoutDesktopBtn').removeAttribute('data-confirm');
   layoutMode = mode;
   applyLayout(true);
   save();
-  showToast(mode === 'desktop' ? '데스크탑 레이아웃 적용 🖥️' : '모바일 레이아웃 적용 📱');
+  showToast(mode === 'desktop' ? '데스크탑 레이아웃 적용' : '모바일 레이아웃 적용');
 }
 
 // ── UX-05: 토스트 알림 (큐 방식 — 연속 호출 시 순서대로 표시) ──
@@ -3370,7 +3431,7 @@ function renderFolderSelects() {
   const folderFilter = document.getElementById('folderFilter');
   if (folderFilter) {
     const cur = folderFilter.value;
-    folderFilter.innerHTML = '<option value="all">📁 모든 폴더</option>' +
+    folderFilter.innerHTML = '<option value="all">모든 폴더</option>' +
       folders.map(f => `<option value="${escHtml(f)}">${escHtml(f)}</option>`).join('');
     if (cur && cur !== 'all') folderFilter.value = cur;
   }
@@ -3412,11 +3473,10 @@ function renderFolderList() {
   list.innerHTML = folders.map(f => {
     const count = words.filter(w => w.folderId === f).length;
     return `<div class="folder-item" data-folder="${escHtml(f)}">
-      <div class="folder-item-icon">📁</div>
       <div class="folder-item-name">${escHtml(f)}</div>
       <div class="folder-item-count">${count}개</div>
       <button class="folder-item-assign" title="단어 대량 지정">＋</button>
-      <button class="folder-item-edit">✏️</button>
+      <button class="folder-item-edit">수정</button>
       <button class="folder-item-del">✕</button>
     </div>`;
   }).join('');
@@ -3451,7 +3511,7 @@ function startFolderRename(btn, oldName) {
       if (idx !== -1) folders[idx] = newName;
       words.forEach(w => { if (w.folderId === oldName) w.folderId = newName; });
       save(); renderFolderSelects(); renderFolderList();
-      showToast(`📁 "${newName}"으로 변경됨`);
+      showToast(`"${newName}"으로 변경됨`);
     } else {
       renderFolderList();
     }
@@ -3470,7 +3530,7 @@ function addFolder(name) {
   if (folders.includes(name)) { showToast('이미 존재하는 폴더예요'); return; }
   folders.push(name);
   save(); renderFolderSelects(); renderFolderList();
-  showToast(`📁 "${name}" 폴더 추가됨`);
+  showToast(`"${name}" 폴더 추가됨`);
 }
 
 // 폴더 삭제 — UX-01: confirm → showConfirm
@@ -3479,7 +3539,7 @@ function deleteFolder(name) {
     folders = folders.filter(f => f !== name);
     words.forEach(w => { if (w.folderId === name) w.folderId = ''; });
     save(); renderFolderSelects(); renderFolderList(); renderWordList();
-    showToast(`🗑️ "${name}" 폴더 삭제됨`);
+    showToast(`"${name}" 폴더 삭제됨`);
   }, { title: '폴더 삭제' });
 }
 
@@ -3495,7 +3555,7 @@ let _assignTargetFolder = '';
 
 function openAssignModal(folderName) {
   _assignTargetFolder = folderName;
-  document.getElementById('assignModalTitle').textContent = '📁 "' + folderName + '" 에 단어 지정';
+  document.getElementById('assignModalTitle').textContent = '"' + folderName + '" 에 단어 지정';
   document.getElementById('assignSearch').value = '';
   renderAssignList('');
   document.getElementById('assignModal').classList.add('open');
@@ -3589,6 +3649,7 @@ document.getElementById('assignModal').addEventListener('click', e => {
 // ═══════════════════════════════════════════════════════════════
 // ── 렌더 캐시 키 (동일 결과면 DOM 업데이트 스킵)
 let _lastRenderKey = '';
+var _analyzeCache = { key: '' }; // 분석 캐시 키 (선언이 빠져 삭제·가져오기·초기화에서 ReferenceError가 나던 버그 수정)
 
 // 카드 앞뒤 높이 균등화 — 뒤집을 때 레이아웃 변화 없도록
 // grid-area 공유 시 backface-visibility 충돌을 JS 측정으로 보완
@@ -3615,7 +3676,7 @@ function renderWordList() {
 
   // 필터 적용
   if (filterMode === 'fav') list = list.filter(w => w.fav);
-  if (filterMode === 'review') list = list.filter(w => getRetention(w) < 0.4 && w.lastLearned);
+  if (filterMode === 'review') list = list.filter(isReviewDue);
 
   // 폴더 필터
   const ff = document.getElementById('folderFilter');
@@ -3699,10 +3760,10 @@ function _buildCardHtml(w) {
   const tierColor = learned ? badge.color : 'var(--text2)';
   const retText = learned ? `${retPct}% 유지 중` : '아직 학습 전';
   const barPct = learned ? retPct : 0;
-  const folderTag = w.folderId ? `<span class="card-folder-tag">📁 ${escHtml(w.folderId)}</span>` : '';
+  const folderTag = w.folderId ? `<span class="card-folder-tag">${escHtml(w.folderId)}</span>` : '';
   const analysis = analyzeMedicalTerm(w.term);
   const affixHint = analysis.roots.length > 0
-    ? `<div class="card-affix-hint">🔬 ${analysis.roots.map(r => `${r.affix}(${r.meaning})`).join(' · ')}</div>`
+    ? `<div class="card-affix-hint">${analysis.roots.map(r => `${r.affix}(${r.meaning})`).join(' · ')}</div>`
     : '';
   return `
   <div class="word-card" id="card-${w.id}" onclick="flipCard(event,'${w.id}')">
@@ -3727,11 +3788,11 @@ function _buildCardHtml(w) {
       <div class="card-back">
         <div class="card-back-head"><div class="card-back-term">${escHtml(w.term)}</div><span class="memory-sub">반감기 ${hlDays}일</span></div>
         <div class="card-back-meaning">${escHtml(w.meaning)}</div>
-        ${w.pronunciation ? `<div class="card-back-pron">🔊 ${escHtml(w.pronunciation)}</div>` : ''}
+        ${w.pronunciation ? `<div class="card-back-pron">${escHtml(w.pronunciation)}</div>` : ''}
         ${detailsHtml(w) ? `<div class="card-back-details">${detailsHtml(w)}</div>` : ''}
         <div class="memory-bar-wrap">
           <div class="memory-bar-label">
-            <span>🧠 기억 에너지</span>
+            <span>기억 에너지</span>
             <span class="memory-sub" style="color:${learned ? 'var(--text2)' : 'var(--text2)'}">${retText}</span>
           </div>
           <div class="memory-bar-track">
@@ -3901,17 +3962,17 @@ function runAffixAnalysis(term) {
 
   // 추천 뜻
   if (analysis.suggestedMeaning) {
-    suggestion.textContent = `💡 조합 뜻: ${analysis.suggestedMeaning}`;
+    suggestion.textContent = `조합 뜻: ${analysis.suggestedMeaning}`;
   } else {
     suggestion.textContent = '';
   }
 
   // 폴더 추천 — BUGFIX: onclick 인라인 대신 data 속성 + addEventListener
   if (analysis.suggestedFolder && folders.includes(analysis.suggestedFolder)) {
-    folderSuggest.innerHTML = `<div class="affix-folder-suggest" data-folder="${escHtml(analysis.suggestedFolder)}">📁 "${escHtml(analysis.suggestedFolder)}" 폴더 자동 배정</div>`;
+    folderSuggest.innerHTML = `<div class="affix-folder-suggest" data-folder="${escHtml(analysis.suggestedFolder)}">"${escHtml(analysis.suggestedFolder)}" 폴더 자동 배정</div>`;
     folderSuggest.querySelector('.affix-folder-suggest').addEventListener('click', e => applyFolderSuggestion(e.currentTarget.dataset.folder));
   } else if (analysis.suggestedFolder) {
-    folderSuggest.innerHTML = `<div style="font-size:11px;color:var(--text3);margin-top:4px">💡 "${escHtml(analysis.suggestedFolder)}" 폴더를 만들면 자동 배정돼요</div>`;
+    folderSuggest.innerHTML = `<div style="font-size:11px;color:var(--text3);margin-top:4px">"${escHtml(analysis.suggestedFolder)}" 폴더를 만들면 자동 배정돼요</div>`;
   } else {
     folderSuggest.innerHTML = '';
   }
@@ -3922,7 +3983,7 @@ function runAffixAnalysis(term) {
 // 추천 폴더 적용
 function applyFolderSuggestion(folderName) {
   document.getElementById('inputFolder').value = folderName;
-  showToast(`📁 "${folderName}" 폴더 적용됨`);
+  showToast(`"${folderName}" 폴더 적용됨`);
 }
 
 // 단어 저장 (추가 또는 수정) — UX-08: 중복 단어 확인 추가
@@ -3987,7 +4048,7 @@ function getStudyPool() {
   switch (quizConfig.pool) {
     case 'fav':    pool = words.filter(w => w.fav); break;
     case 'folder': pool = words.filter(w => w.folderId === quizConfig.folderName); break;
-    case 'review': pool = words.filter(w => getRetention(w) < 0.4 && w.lastLearned); break;
+    case 'review': pool = words.filter(isReviewDue); break;
     default:       pool = [...words];
   }
   if (quizConfig.wrongOnly && lastWrongWords.length) {
@@ -4089,7 +4150,7 @@ function renderMemoCard() {
       memoWords = shuffle(forgotWords);
       memoIdx = 0;
       memoForgot = [];
-      showToast(`❌ 몰랐던 ${memoWords.length}개 단어를 다시 볼게요`);
+      showToast(`몰랐던 ${memoWords.length}개 단어를 다시 볼게요`);
       renderMemoCard();
       return;
     }
@@ -4105,14 +4166,14 @@ function renderMemoCard() {
   document.getElementById('memoProgressLabel').textContent = `${memoIdx + 1} / ${total}`;
   document.getElementById('memoProgressFill').style.width = pct + '%';
   document.getElementById('memoProgFill').style.width = pct + '%';
-  document.getElementById('memoKnewCount').textContent = `✅ ${memoKnew.length}`;
-  document.getElementById('memoForgotCount').textContent = `❌ ${memoForgot.length}`;
+  document.getElementById('memoKnewCount').textContent = `✓ ${memoKnew.length}`;
+  document.getElementById('memoForgotCount').textContent = `✗ ${memoForgot.length}`;
 
   document.getElementById('memoTerm').textContent = w.term;
   document.getElementById('memoPron').textContent = w.pronunciation ? `[${w.pronunciation}]` : '';
   document.getElementById('memoMeaning').textContent = w.meaning;
   document.getElementById('memoMeaningSub').textContent =
-    memoRound === 2 ? '🔁 다시 한번 확인해보세요' : '';
+    memoRound === 2 ? '다시 한번 확인해보세요' : '';
   document.getElementById('memoDetails').innerHTML = detailsHtml(w);
 
   // 카드가 이미 앞면(flipped 없음) 상태에서 데이터만 갱신
@@ -4193,15 +4254,15 @@ function endMemo() {
     <div class="memo-result-stats">
       <div class="memo-stat-box">
         <div class="memo-stat-num knew">${totalKnew}</div>
-        <div class="memo-stat-label">✅ 알았다</div>
+        <div class="memo-stat-label">알았다</div>
       </div>
       <div class="memo-stat-box">
         <div class="memo-stat-num forgot">${totalForgot}</div>
-        <div class="memo-stat-label">❌ 몰랐다</div>
+        <div class="memo-stat-label">몰랐다</div>
       </div>
     </div>
     <div style="display:flex;gap:10px;width:100%">
-      <button class="btn btn-secondary" style="flex:1" onclick="startMemo()">🔁 다시 외우기</button>
+      <button class="btn btn-secondary" style="flex:1" onclick="startMemo()">다시 외우기</button>
       <button class="btn btn-primary" style="flex:1" onclick="showScreen('homeScreen')">홈으로</button>
     </div>
   `;
@@ -4300,10 +4361,10 @@ function renderQuizQuestion() {
   const algoInfo = document.getElementById('algoInfo');
   if (algoInfo) {
     algoInfo.innerHTML = `
-      <span class="algo-chip">${badge.icon} ${badge.label}</span>
-      <span class="algo-chip">🧠 BKT ${Math.round(w.p_known * 100)}%</span>
-      <span class="algo-chip">💾 기억 ${retention}%</span>
-      <span class="algo-chip">⏳ 반감기 ${w.halflife.toFixed(1)}일</span>
+      <span class="algo-chip">${badge.label}</span>
+      <span class="algo-chip">BKT ${Math.round(w.p_known * 100)}%</span>
+      <span class="algo-chip">기억 ${retention}%</span>
+      <span class="algo-chip">반감기 ${w.halflife.toFixed(1)}일</span>
     `;
   }
 
@@ -4502,7 +4563,7 @@ function showHint() {
 
   if (quizConfig.dir === 'detail') {
     const v = (w._q && w._q.value) || '';
-    showToast(`💡 정답은 "${v.slice(0, 2)}"(으)로 시작해요`);
+    showToast(`정답은 "${v.slice(0, 2)}"(으)로 시작해요`);
     return;
   }
 
@@ -4513,7 +4574,7 @@ function showHint() {
     if (!analysis || (analysis.prefixes.length === 0 && analysis.roots.length === 0 && analysis.suffixes.length === 0)) {
       // 접사 분석 결과 없으면 뜻의 첫 글자 힌트
       const firstChar = w.meaning[0];
-      showToast(`💡 뜻 첫 글자: "${firstChar}"`);
+      showToast(`뜻 첫 글자: "${firstChar}"`);
       return;
     }
 
@@ -4523,7 +4584,7 @@ function showHint() {
     analysis.suffixes.forEach(s => { html += `<span class="affix-chip suffix">${s.affix} = ${s.meaning}</span>`; });
     html += '</div>';
     if (analysis.suggestedMeaning) {
-      html += `<div class="hint-meaning">💡 조합 힌트: <b>${analysis.suggestedMeaning}</b></div>`;
+      html += `<div class="hint-meaning">조합 힌트: <b>${analysis.suggestedMeaning}</b></div>`;
     }
     hintContent.innerHTML = html;
 
@@ -4537,7 +4598,7 @@ function showHint() {
       // 접사 분석 없으면 영어 단어 첫 글자 + 길이 힌트
       inp.value = term[0];
       inp.focus();
-      showToast(`💡 첫 글자: "${term[0]}" (총 ${term.length}글자)`);
+      showToast(`첫 글자: "${term[0]}" (총 ${term.length}글자)`);
       return;
     }
 
@@ -4549,7 +4610,7 @@ function showHint() {
     analysis.suffixes.forEach(s => { html += `<span class="affix-chip suffix">${s.affix} = ${s.meaning}</span>`; });
     html += '</div>';
     if (analysis.suggestedMeaning) {
-      html += `<div class="hint-meaning">💡 조합 힌트: <b>${analysis.suggestedMeaning}</b></div>`;
+      html += `<div class="hint-meaning">조합 힌트: <b>${analysis.suggestedMeaning}</b></div>`;
     }
     // 주관식 입력창에 첫 글자 자동 입력
     if (inp && !inp.value) { inp.value = term[0]; inp.focus(); }
@@ -4591,7 +4652,7 @@ function endQuiz() {
   if (masteredEl) {
     if (newMastered.length) {
       masteredEl.style.display = 'block';
-      masteredEl.innerHTML = `<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--gold);margin-bottom:8px">🏆 이번 세션 마스터</div>` +
+      masteredEl.innerHTML = `<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--gold);margin-bottom:8px">이번 세션 마스터</div>` +
         newMastered.map(t => `<div style="font-size:13px;color:var(--text);padding:4px 0;border-bottom:1px solid var(--border)">${escHtml(t)}</div>`).join('');
     } else {
       masteredEl.style.display = 'none';
@@ -4681,7 +4742,7 @@ function renderKnowledgeChart() {
   if (!el) return;
   const data = stats.dailyKnowledge || [];
   if (data.length < 2) {
-    el.innerHTML = '<div style="color:var(--text3);font-size:12px;text-align:center;padding:20px 0">학습을 마치면 추이가 쌓여요 📈</div>';
+    el.innerHTML = '<div style="color:var(--text3);font-size:12px;text-align:center;padding:20px 0">학습을 마치면 추이가 쌓여요</div>';
     return;
   }
   const recent = data.slice(-14);
@@ -4774,7 +4835,7 @@ function renderWeakList() {
       </div>
       <div style="text-align:right;flex-shrink:0">
         <div class="weak-errors">${cnt}회 오답</div>
-        <div style="font-size:11px;color:${badge.color};margin-top:2px">${badge.icon} ${badge.label}</div>
+        <div style="font-size:11px;color:${badge.color};margin-top:2px">${badge.label}</div>
       </div>
     </div>`;
   }).join('');
@@ -4787,22 +4848,22 @@ function renderWeakList() {
 
 // 카테고리별 아이콘/색상 매핑
 const CAT_META = {
-  '순환기계': { icon:'🫀', color:'#e05c7a' },
-  '호흡기계': { icon:'🫁', color:'#5b8fe8' },
-  '소화기계': { icon:'🫃', color:'#e8a23a' },
-  '비뇨기계': { icon:'💧', color:'#4db8b8' },
-  '신경계':   { icon:'🧠', color:'#9b6fd4' },
-  '근골격계': { icon:'🦴', color:'#c4855a' },
-  '내분비계': { icon:'⚗️', color:'#5cb85c' },
-  '피부/감각':{ icon:'👁️', color:'#e8c53a' },
-  '생식기계': { icon:'🔴', color:'#e8556d' },
-  '혈액/면역':{ icon:'🩸', color:'#d94f4f' },
-  '증상':     { icon:'🌡️', color:'#e07050' },
-  '수술':     { icon:'🔪', color:'#708090' },
-  '진단':     { icon:'🔬', color:'#2d9e6b' },
-  '조직':     { icon:'🔵', color:'#5b8fe8' },
-  '직업':     { icon:'👨‍⚕️', color:'#52b788' },
-  '미분류':   { icon:'❓', color:'#aaa' },
+  '순환기계': { icon:'순', color:'#e05c7a' },
+  '호흡기계': { icon:'호', color:'#5b8fe8' },
+  '소화기계': { icon:'소', color:'#e8a23a' },
+  '비뇨기계': { icon:'비', color:'#4db8b8' },
+  '신경계':   { icon:'신', color:'#9b6fd4' },
+  '근골격계': { icon:'근', color:'#c4855a' },
+  '내분비계': { icon:'내', color:'#5cb85c' },
+  '피부/감각':{ icon:'피', color:'#e8c53a' },
+  '생식기계': { icon:'생', color:'#e8556d' },
+  '혈액/면역':{ icon:'혈', color:'#d94f4f' },
+  '증상':     { icon:'증', color:'#e07050' },
+  '수술':     { icon:'수', color:'#708090' },
+  '진단':     { icon:'진', color:'#2d9e6b' },
+  '조직':     { icon:'조', color:'#5b8fe8' },
+  '직업':     { icon:'직', color:'#52b788' },
+  '미분류':   { icon:'미', color:'#aaa' },
 };
 
 // 현재 활성 분석 탭 추적
@@ -4845,7 +4906,7 @@ function renderBubbleMap() {
     const meta = CAT_META[cat] || CAT_META['미분류'];
     const pct = Math.round(ws.length / maxCnt * 100);
     return `<div class="bubble-cell" data-cat="${escHtml(cat)}">
-      <div class="bubble-icon">${meta.icon}</div>
+      <div class="bubble-icon" style="color:${meta.color}">${meta.icon}</div>
       <div class="bubble-info">
         <div class="bubble-name">${escHtml(cat)}</div>
         <div class="bubble-cnt">${ws.length}개 단어</div>
@@ -4869,7 +4930,7 @@ function showBubbleDetail(cat) {
   });
   const detail = document.getElementById('bubbleDetail');
   const meta = CAT_META[cat] || CAT_META['미분류'];
-  document.getElementById('bubbleDetailTitle').textContent = `${meta.icon} ${cat} — ${ws.length}개`;
+  document.getElementById('bubbleDetailTitle').textContent = `${cat} — ${ws.length}개`;
   document.getElementById('bubbleDetailList').innerHTML = ws.map(w =>
     `<div class="bubble-detail-item">
       <span style="font-weight:600">${escHtml(w.term)}</span>
@@ -4911,7 +4972,7 @@ function renderAffixDistTab(tab, freq) {
 
   if (tab === 'unclassified') {
     const ws = freq.unclassified;
-    if (!ws.length) { el.innerHTML = '<div style="color:var(--text3);font-size:13px;text-align:center;padding:20px">모든 단어가 접사 분석됐어요 🎉</div>'; return; }
+    if (!ws.length) { el.innerHTML = '<div style="color:var(--text3);font-size:13px;text-align:center;padding:20px">모든 단어가 접사 분석됐어요</div>'; return; }
     el.innerHTML = `<div style="margin-bottom:8px;font-size:12px;color:var(--text3)">${ws.length}개 단어가 접사 미인식 상태예요</div>
       <div class="unclassified-grid">${ws.map(w=>`<div class="unclassified-chip">${escHtml(w.term)}</div>`).join('')}</div>`;
     return;
@@ -5225,7 +5286,7 @@ function exportData() {
   const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
   const a = document.createElement('a'); a.href = url; a.download = `medlex_backup_${dateStr}.json`; a.click();
   URL.revokeObjectURL(url);
-  showToast('내보내기 완료 📤');
+  showToast('내보내기 완료');
 }
 
 // 가져오기 — UX-01: confirm → showConfirm
@@ -5256,7 +5317,7 @@ function importData(file) {
         }
         affixCache.clear(); _lastRenderKey = ''; _analyzeCache.key = '';
         saveAll(); renderWordList(); renderFolderSelects();
-        showToast(`${newWords.length}개 단어 가져오기 완료 📥`);
+        showToast(`${newWords.length}개 단어 가져오기 완료`);
       }, { title: '가져오기', okLabel: '가져오기', danger: false });
     } catch { showToast('파일 형식이 올바르지 않아요'); }
   };
@@ -5271,7 +5332,7 @@ function clearAllData() {
     affixCache.clear(); _lastRenderKey = '';
     _analyzeCache.key = '';
     saveAll(); renderWordList(); renderFolderSelects();
-    showToast('🗑️ 데이터 초기화 완료');
+    showToast('데이터 초기화 완료');
   }, { title: '데이터 초기화', okLabel: '전부 삭제' });
 }
 
@@ -5674,12 +5735,12 @@ document.getElementById('memoBackBtn').addEventListener('click', () => {
 document.getElementById('quizBackBtn').addEventListener('click', () => {
   showConfirm(
     '학습을 중단할까요?',
-    () => { showScreen('studySetupScreen'); },
+    () => { if (window.clearQuizSession) clearQuizSession(); showScreen('studySetupScreen'); },
     {
       title: '학습 중단',
       okLabel: '그냥 종료',
       danger: true,
-      extraLabel: quizResults.length > 0 ? `📊 ${quizResults.length}문제 결과 저장 후 종료` : null,
+      extraLabel: quizResults.length > 0 ? `${quizResults.length}문제 결과 저장 후 종료` : null,
       onExtra: quizResults.length > 0 ? () => { endQuiz(); } : null
     }
   );
@@ -5709,8 +5770,14 @@ const TOUR_KEY = 'medlex_tour_done';
 const TOUR_STEPS = [
   {
     target: 'header-logo',
-    title: 'MedLex에 오신 걸 환영해요! 👋',
+    title: 'MedLex에 오신 걸 환영해요!',
     desc: '의학용어 학습에 특화된 단어장이에요. 간단한 안내를 시작할게요. (약 1분)',
+    position: 'bottom',
+  },
+  {
+    target: 'todayHero',
+    title: '오늘의 복습',
+    desc: '기억 유지율이 낮아진 단어를 모아서 보여줘요. 복습 시작을 누르면 그 단어들만 퀴즈로 출제돼요.',
     position: 'bottom',
   },
   {
@@ -5721,31 +5788,37 @@ const TOUR_STEPS = [
   },
   {
     target: 'searchInput',
-    title: '단어 검색 🔍',
-    desc: '영어, 한글 뜻, 발음 어느 쪽으로도 검색할 수 있어요. 슬래시(/) 키를 눌러도 바로 검색창이 활성화돼요.',
+    title: '단어 검색',
+    desc: '영어, 한글 뜻, 발음, 상세 정보 어느 쪽으로도 검색할 수 있어요. 슬래시(/) 키를 눌러도 바로 검색창이 활성화돼요.',
+    position: 'bottom',
+  },
+  {
+    target: 'meaningToggle',
+    title: '뜻 가리기',
+    desc: '켜면 단어장에서 뜻이 흐려져요. 먼저 떠올려 본 뒤 카드를 탭하면 뒷면에서 확인하고 기억 에너지도 볼 수 있어요.',
     position: 'bottom',
   },
   {
     target: 'navStudy',
-    title: '학습 탭 ✏️',
+    title: '학습 탭',
     desc: '플래시카드, 4지선다, 빈칸채우기 세 가지 방식으로 학습해요. BKT 알고리즘이 취약한 단어를 우선 출제해요.',
     position: 'top',
   },
   {
     target: 'navStats',
-    title: '통계 탭 📊',
+    title: '통계 탭',
     desc: '학습 현황, 정답률, 연속 학습일 등을 확인할 수 있어요.',
     position: 'top',
   },
   {
     target: 'navAnalyze',
-    title: '분석 탭 🔬',
+    title: '분석 탭',
     desc: '의학 접사(어근·접두사·접미사)를 분석해줘요. cardiomegaly → cardio + megaly 이런 식으로 단어 구조를 이해할 수 있어요.',
     position: 'top',
   },
   {
     target: 'settingsBtn',
-    title: '설정 ⚙️',
+    title: '설정',
     desc: '다크모드, 단축키, 데이터 내보내기/가져오기 등을 여기서 설정해요.',
     position: 'bottom',
     isLast: true,
@@ -5816,7 +5889,8 @@ function tourEnd() {
       if (_tourEl) { _tourEl.remove(); _tourEl = null; }
     }, 220);
   }
-  showToast('투어 완료! 언제든 설정에서 다시 볼 수 있어요 😄');
+  showToast('투어 완료! 언제든 설정에서 다시 볼 수 있어요');
+  try { const h = document.getElementById('flipHint'); if (h && localStorage.getItem('medlex_flip_hint') !== '1') h.hidden = false; } catch (e) {}
 }
 
 function tourRender() {
@@ -5828,7 +5902,7 @@ function tourRender() {
   _tourEl.querySelector('#tour-title').textContent = step.title;
   _tourEl.querySelector('#tour-desc').textContent = step.desc;
   _tourEl.querySelector('#tour-prev').style.display = _tourStep === 0 ? 'none' : '';
-  _tourEl.querySelector('#tour-next').textContent = step.isLast ? '완료 🎉' : '다음 →';
+  _tourEl.querySelector('#tour-next').textContent = step.isLast ? '완료' : '다음 →';
 
   // 진행 점
   const prog = _tourEl.querySelector('#tour-progress');
@@ -5918,6 +5992,7 @@ window.addEventListener('beforeunload', () => saveAll());
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'hidden') saveAll();
 });
+
 </script>
 
 <script>
@@ -5931,8 +6006,8 @@ document.addEventListener('visibilitychange', () => {
   // 카드 ⋯ 메뉴
   const menu = document.createElement('div');
   menu.className = 'card-menu'; menu.id = 'cardMenu'; menu.setAttribute('role', 'menu');
-  menu.innerHTML = '<button type="button" role="menuitem" data-act="edit">✏️ 수정</button>' +
-                   '<button type="button" role="menuitem" data-act="del" class="danger">🗑️ 삭제</button>';
+  menu.innerHTML = '<button type="button" role="menuitem" data-act="edit">수정</button>' +
+                   '<button type="button" role="menuitem" data-act="del" class="danger">삭제</button>';
   document.body.appendChild(menu);
   let menuId = null;
   const noop = { stopPropagation() {} };
@@ -5988,14 +6063,14 @@ document.addEventListener('visibilitychange', () => {
   const hint = document.getElementById('flipHint');
   window.dismissFlipHint = function () { if (!hint.hidden) { hint.hidden = true; store.set('medlex_flip_hint', '1'); } };
   document.getElementById('flipHintClose').addEventListener('click', window.dismissFlipHint);
-  if (store.get('medlex_flip_hint') !== '1') hint.hidden = false;
+  if (store.get('medlex_flip_hint') !== '1' && store.get('medlex_tour_done')) hint.hidden = false;
 })();
 
   // ═══ V2 테스트: 홈 히어로 ═══
   function updateHero(){
     try{
       const learned=words.filter(w=>w.lastLearned);
-      const due=learned.filter(w=>getRetention(w)<0.7).length;
+      const due=learned.filter(isReviewDue).length;
       const fresh=words.length-learned.length;
       document.getElementById('thDue').textContent=due;
       document.getElementById('thSub').textContent=`새 단어 ${fresh}개 · 전체 ${words.length}개`;
@@ -6003,11 +6078,239 @@ document.addEventListener('visibilitychange', () => {
     }catch(e){}
   }
   document.getElementById('thStart').addEventListener('click',()=>{
-    if(words.length<2){showToast('단어가 2개 이상 필요해요');return;}
+    const due=words.filter(isReviewDue).length;
+    if(due===0){showToast('지금 복습할 단어가 없어요');return;}
+    if(due<2){showToast('복습할 단어가 2개 이상일 때 시작할 수 있어요');return;}
+    const prev={pool:quizConfig.pool,wrongOnly:quizConfig.wrongOnly,count:quizConfig.count,folderName:quizConfig.folderName};
+    quizConfig.pool='review'; quizConfig.wrongOnly=false; quizConfig.count='all';
+    if(quizConfig.dir==='detail') quizConfig.dir='en2kr'; // 상세 정보 모드는 복습 풀과 맞지 않아 기본 방향으로
     setupStudyScreen(); startQuiz();
+    Object.assign(quizConfig,prev); // 풀·개수 설정 원복 (진행 중 퀴즈는 이미 단어가 확정됨)
   });
   (function(){const _rw=renderWordList;renderWordList=function(){_rw.apply(this,arguments);updateHero();};})();
   updateHero();
+</script>
+
+<script>
+// ── 디테일 패치: 퀴즈 진행 저장/이어서 풀기 + 접근성 라벨 ──
+(function () {
+  const KEY = 'medlex_quiz_session', MAX_AGE = 3 * 24 * 3600 * 1000;
+  const ls = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+    del(k) { try { localStorage.removeItem(k); } catch (e) {} }
+  };
+
+  function load() {
+    try {
+      const s = JSON.parse(ls.get(KEY) || 'null');
+      if (!s || Date.now() - s.t > MAX_AGE) return null;
+      if (!Array.isArray(s.words) || !Array.isArray(s.results) || s.idx >= s.words.length || s.results.length === 0) return null;
+      return s;
+    } catch (e) { return null; }
+  }
+  function save() {
+    ls.set(KEY, JSON.stringify({ t: Date.now(), cfg: quizConfig, words: quizWords, idx: quizIdx, results: quizResults, wrong: wrongWords, ksk: quizStartKnowledge }));
+  }
+  function clear() { ls.del(KEY); updateBanners(); }
+  window.clearQuizSession = clear;
+
+  // 배너 (홈 + 학습 설정)
+  const banners = [];
+  function makeBanner(host, after) {
+    if (!host && !after) return;
+    const el = document.createElement('div');
+    el.className = 'resume-banner'; el.hidden = true;
+    el.innerHTML = '<div class="rb-text"><b>진행 중이던 퀴즈가 있어요</b><small></small></div>' +
+      '<button type="button" class="rb-go">이어서 풀기</button>' +
+      '<button type="button" class="rb-drop" aria-label="진행 중이던 퀴즈 버리기">버리기</button>';
+    el.querySelector('.rb-go').addEventListener('click', resume);
+    el.querySelector('.rb-drop').addEventListener('click', () => {
+      showConfirm('진행 중이던 퀴즈를 버릴까요?', clear, { title: '퀴즈 버리기', okLabel: '버리기', danger: true });
+    });
+    after ? after.insertAdjacentElement('afterend', el) : host.prepend(el);
+    banners.push(el);
+  }
+  function updateBanners() {
+    const s = load();
+    banners.forEach(el => {
+      el.hidden = !s;
+      if (!s) return;
+      const mins = Math.max(1, Math.round((Date.now() - s.t) / 60000));
+      const ago = mins < 60 ? mins + '분 전' : mins < 1440 ? Math.round(mins / 60) + '시간 전' : Math.round(mins / 1440) + '일 전';
+      el.querySelector('small').textContent = s.idx + ' / ' + s.words.length + '문제 · ' + ago;
+    });
+  }
+  function resume() {
+    const s = load(); if (!s) { updateBanners(); return; }
+    Object.assign(quizConfig, s.cfg);
+    quizWords = s.words; quizIdx = s.idx; quizResults = s.results; wrongWords = s.wrong; quizStartKnowledge = s.ksk;
+    try { setupStudyScreen(); } catch (e) {}
+    showScreen('quizScreen');
+    renderQuizQuestion();
+  }
+
+  makeBanner(null, document.getElementById('todayHero'));
+  makeBanner(document.querySelector('#studySetupScreen .study-setup'), document.querySelector('#studySetupScreen .setup-subtitle'));
+
+  // 문제가 새로 그려질 때마다 저장, 종료되면 삭제
+  const _rq = renderQuizQuestion;
+  renderQuizQuestion = function () { if (quizIdx < quizWords.length) save(); return _rq.apply(this, arguments); };
+  const _eq = endQuiz;
+  endQuiz = function () { ls.del(KEY); const r = _eq.apply(this, arguments); updateBanners(); return r; };
+  const _ss = showScreen;
+  showScreen = function () { const r = _ss.apply(this, arguments); updateBanners(); return r; };
+  updateBanners();
+
+  // 접근성: 기호만 있는 버튼에 이름 부여 (동적으로 생기는 버튼 포함)
+  function label(root) {
+    root.querySelectorAll('button:not([aria-label])').forEach(b => {
+      const t = b.textContent.trim();
+      if (t === '✕' || t === '×') b.setAttribute('aria-label', /del/.test(b.className) ? '삭제' : '닫기');
+      else if (t === '＋') b.setAttribute('aria-label', b.title || '추가');
+      else if (!t && b.title) b.setAttribute('aria-label', b.title);
+    });
+  }
+  label(document);
+  let pending = false;
+  new MutationObserver(() => {
+    if (pending) return; pending = true;
+    requestAnimationFrame(() => { pending = false; label(document); });
+  }).observe(document.body, { childList: true, subtree: true });
+})();
+</script>
+
+<script>
+// ── 일괄 추가 + 삭제 되돌리기 ──
+(function () {
+  const $ = id => document.getElementById(id);
+
+  // ===== 되돌리기 스낵바 =====
+  const snack = document.createElement('div');
+  snack.className = 'undo-snack'; snack.setAttribute('role', 'status'); snack.setAttribute('aria-live', 'polite');
+  snack.innerHTML = '<span class="us-msg"></span><button type="button" class="us-btn">되돌리기</button>';
+  document.body.appendChild(snack);
+  let undoFn = null, undoTimer = null;
+  function hideUndo() { snack.classList.remove('show'); undoFn = null; clearTimeout(undoTimer); }
+  function showUndo(msg, fn) {
+    clearTimeout(undoTimer);
+    undoFn = fn;
+    snack.querySelector('.us-msg').textContent = msg;
+    snack.classList.add('show');
+    undoTimer = setTimeout(hideUndo, 7000);
+  }
+  snack.querySelector('.us-btn').addEventListener('click', () => {
+    const f = undoFn; hideUndo();
+    if (f) { f(); showToast('되돌렸어요'); }
+  });
+
+  // 단어 삭제: 확인 창 대신 즉시 삭제 + 되돌리기
+  deleteWord = function (e, id) {
+    if (e && e.stopPropagation) e.stopPropagation();
+    const idx = words.findIndex(w => w.id === id);
+    if (idx < 0) return;
+    const target = words[idx];
+    const hadErr = !!(stats.errors && Object.prototype.hasOwnProperty.call(stats.errors, id));
+    const errBackup = hadErr ? stats.errors[id] : undefined;
+    words = words.filter(w => w.id !== id);
+    if (hadErr) delete stats.errors[id];
+    affixCache.delete(target.term.toLowerCase().replace(/[\s\-]/g, ''));
+    _lastRenderKey = ''; _analyzeCache.key = '';
+    saveWords(); saveStats(); renderWordList();
+    showUndo('"' + target.term + '" 삭제됐어요', () => {
+      words.splice(Math.min(idx, words.length), 0, target);
+      if (hadErr) { stats.errors = stats.errors || {}; stats.errors[id] = errBackup; }
+      _lastRenderKey = ''; _analyzeCache.key = '';
+      saveWords(); saveStats(); renderWordList();
+    });
+  };
+
+  // ===== 일괄 추가 =====
+  const modal = $('bulkModal'), input = $('bulkInput'), folderSel = $('bulkFolder'),
+        skipDup = $('bulkSkipDup'), summary = $('bulkSummary'), errBox = $('bulkErrors'), saveBtn = $('bulkSave');
+  const SEPS = ['\t', ' - ', ' – ', ' — ', ' : ', ':', ',', '，'];
+  let parsed = { rows: [], bad: [] };
+
+  function parse(text) {
+    const rows = [], bad = [], seen = new Set();
+    const existing = new Set(words.map(w => w.term.toLowerCase()));
+    text.split(/\r?\n/).forEach(raw => {
+      const line = raw.trim();
+      if (!line) return;
+      let at = -1, len = 0;
+      SEPS.forEach(sep => { const k = line.indexOf(sep); if (k > 0 && (at < 0 || k < at)) { at = k; len = sep.length; } });
+      if (at < 0) { bad.push(line); return; }
+      const term = line.slice(0, at).trim().replace(/^(\d+[.)]\s*|[-•*]\s+)/, '');
+      const meaning = line.slice(at + len).trim();
+      if (!term || !meaning || term.length > 100 || meaning.length > 200) { bad.push(line); return; }
+      const key = term.toLowerCase();
+      const dup = existing.has(key) || seen.has(key);
+      seen.add(key);
+      rows.push({ term, meaning, dup });
+    });
+    return { rows, bad };
+  }
+  function refresh() {
+    parsed = parse(input.value);
+    const dups = parsed.rows.filter(r => r.dup).length;
+    const adding = parsed.rows.length - (skipDup.checked ? dups : 0);
+    const parts = [];
+    if (parsed.rows.length || parsed.bad.length) {
+      parts.push(adding + '개 추가');
+      if (dups) parts.push('중복 ' + dups + '개' + (skipDup.checked ? ' 건너뜀' : ' 포함'));
+      if (parsed.bad.length) parts.push('인식 실패 ' + parsed.bad.length + '줄');
+    }
+    summary.textContent = parts.join(' · ');
+    errBox.textContent = '';
+    if (parsed.bad.length) {
+      const shown = parsed.bad.slice(0, 4).map(l => (l.length > 40 ? l.slice(0, 40) + '…' : l));
+      errBox.textContent = '구분자를 찾지 못했어요: ' + shown.join(' / ') + (parsed.bad.length > 4 ? ' 외 ' + (parsed.bad.length - 4) + '줄' : '');
+    }
+    saveBtn.disabled = adding < 1;
+    saveBtn.textContent = adding > 0 ? adding + '개 추가' : '추가';
+  }
+  function openBulk() {
+    if (typeof closeModal === 'function') closeModal();
+    folderSel.innerHTML = '<option value="">폴더 없음</option>' + folders.map(f => '<option value="' + escHtml(f) + '">' + escHtml(f) + '</option>').join('');
+    input.value = ''; refresh();
+    modal.classList.add('open');
+    setTimeout(() => input.focus(), 300);
+  }
+  function closeBulk() { modal.classList.remove('open'); }
+
+  $('openBulkBtn').addEventListener('click', openBulk);
+  $('bulkCancel').addEventListener('click', closeBulk);
+  modal.addEventListener('click', e => { if (e.target === modal) closeBulk(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeBulk(); });
+  input.addEventListener('input', refresh);
+  skipDup.addEventListener('change', refresh);
+
+  saveBtn.addEventListener('click', async () => {
+    refresh();
+    const add = parsed.rows.filter(r => !(skipDup.checked && r.dup));
+    if (!add.length) return;
+    saveBtn.disabled = true;
+    const folderId = folderSel.value, ids = [];
+    add.forEach(r => {
+      const nw = initWordAlgo({
+        id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+        term: r.term, meaning: r.meaning, pronunciation: '', fav: false, folderId, details: []
+      });
+      words.push(nw); ids.push(nw.id);
+    });
+    try { await checkAutoBackup(); } catch (e) {}
+    save(); _lastRenderKey = ''; closeBulk(); renderWordList(); updateFileStatusUI();
+    showUndo(ids.length + '개 추가됐어요', () => {
+      words = words.filter(w => !ids.includes(w.id));
+      _lastRenderKey = ''; _analyzeCache.key = '';
+      save(); renderWordList(); updateFileStatusUI();
+    });
+  });
+
+  // 수정 모드에서는 일괄 추가 링크 숨김
+  const _om = openModal;
+  openModal = function () { const r = _om.apply(this, arguments); $('openBulkBtn').hidden = !!editId; return r; };
+})();
 </script>
 </body>
 </html>
