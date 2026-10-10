@@ -2876,6 +2876,17 @@ function initWordAlgo(w) {
   if (w.p_known     === undefined) w.p_known     = BKT.P_INIT;
   if (w.history     === undefined) w.history     = [];
   if (w.folderId    === undefined) w.folderId    = '';
+  // 손상되었거나 손으로 편집한 데이터 방어: 타입이 맞지 않는 값은 기본값으로 되돌림
+  if (!Array.isArray(w.details)) w.details = [];
+  else w.details = w.details.filter(d => d && typeof d === 'object').map(d => ({ ...d, label: String(d.label ?? ''), value: String(d.value ?? '') }));
+  if (typeof w.halflife !== 'number' || !isFinite(w.halflife) || w.halflife <= 0) w.halflife = HALO.INIT_HL;
+  if (w.lastLearned !== null && (typeof w.lastLearned !== 'number' || !isFinite(w.lastLearned))) w.lastLearned = null;
+  if (typeof w.p_known !== 'number' || !isFinite(w.p_known)) w.p_known = BKT.P_INIT;
+  else w.p_known = Math.min(1, Math.max(0, w.p_known));
+  if (!Array.isArray(w.history)) w.history = [];
+  if (typeof w.folderId !== 'string') w.folderId = '';
+  if (w.pronunciation !== undefined && typeof w.pronunciation !== 'string') w.pronunciation = '';
+  if (w.fav !== undefined && typeof w.fav !== 'boolean') w.fav = !!w.fav;
   return w;
 }
 
@@ -2889,6 +2900,21 @@ function isValidImportedWord(w) {
     && typeof w.id === 'string' && w.id.length > 0
     && typeof w.term === 'string' && w.term.trim().length > 0
     && typeof w.meaning === 'string' && w.meaning.trim().length > 0);
+}
+
+// 가져온 통계에서 숫자/배열 형식이 맞는 값만 사용
+function sanitizeImportedStats(s) {
+  const out = {};
+  if (!s || typeof s !== 'object') return out;
+  ['sessions', 'totalQ', 'totalCorrect'].forEach(k => { if (typeof s[k] === 'number' && isFinite(s[k])) out[k] = s[k]; });
+  if (s.errors && typeof s.errors === 'object' && !Array.isArray(s.errors)) {
+    out.errors = {};
+    Object.keys(s.errors).forEach(id => { const n = s.errors[id]; if (typeof n === 'number' && isFinite(n)) out.errors[id] = n; });
+  }
+  if (Array.isArray(s.dailyKnowledge)) {
+    out.dailyKnowledge = s.dailyKnowledge.filter(d => d && typeof d.date === 'string' && typeof d.delta === 'number' && typeof d.avg === 'number');
+  }
+  return out;
 }
 
 // 기억 유지 확률 R = e^(-t/h)
@@ -3024,10 +3050,10 @@ async function connectJsonFile() {
       const skipNote = skipped > 0 ? `\n(형식이 올바르지 않은 ${skipped}개는 제외됩니다)` : '';
       showConfirm(`파일에서 ${validWords.length}개의 단어를 발견했습니다. 불러올까요?\n(기존 데이터는 병합됩니다)${skipNote}`, () => {
         const existingIds = new Set(words.map(w => w.id));
-        const newWords = validWords.filter(w => !existingIds.has(w.id)).map(initWordAlgo);
+        const newWords = validWords.filter(w => { if (existingIds.has(w.id)) return false; existingIds.add(w.id); return true; }).map(initWordAlgo);
         words = [...words, ...newWords];
-        if (data.stats) stats = { ...stats, ...data.stats };
-        if (Array.isArray(data.folders)) folders = [...new Set([...folders, ...data.folders])];
+        if (data.stats) stats = { ...stats, ...sanitizeImportedStats(data.stats) };
+        if (Array.isArray(data.folders)) folders = [...new Set([...folders, ...data.folders.filter(f => typeof f === 'string' && f.trim())])];
         save();
         renderWordList();
         renderFolderSelects();
@@ -4978,6 +5004,7 @@ function renderAffixDistTab(tab, freq) {
     return;
   }
 
+  if (!freq[tab]) return;
   const entries = Object.entries(freq[tab]).sort((a,b) => b[1].cnt - a[1].cnt).slice(0, 15);
   if (!entries.length) { el.innerHTML = '<div style="color:var(--text3);font-size:13px;text-align:center;padding:20px">해당하는 접사가 없어요</div>'; return; }
   const maxCnt = entries[0][1].cnt;
@@ -5262,9 +5289,10 @@ function initAnalyzeTabs() {
     });
   });
 
-  document.querySelectorAll('.affix-dist-tab').forEach(btn => {
+  // 접사 분포 탭(data-dtab)에만 적용. 사전 탭(data-utab)이 같은 클래스를 써서 잘못 연결되던 버그 수정
+  document.querySelectorAll('.affix-dist-tab[data-dtab]').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.affix-dist-tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.affix-dist-tab[data-dtab]').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       activeDistTab = btn.dataset.dtab;
       renderAffixDist();
@@ -5302,15 +5330,16 @@ function importData(file) {
       const skipNote = skipped > 0 ? ` (형식이 올바르지 않은 ${skipped}개는 제외)` : '';
       showConfirm(`${validWords.length}개의 단어를 가져올까요? 기존 데이터는 유지됩니다.${skipNote}`, () => {
         const existingIds = new Set(words.map(w => w.id));
-        const newWords = validWords.filter(w => !existingIds.has(w.id)).map(initWordAlgo);
+        const newWords = validWords.filter(w => { if (existingIds.has(w.id)) return false; existingIds.add(w.id); return true; }).map(initWordAlgo);
         words = [...words, ...newWords];
-        if (data.stats) stats = { ...stats, ...data.stats };
-        if (Array.isArray(data.folders)) folders = [...new Set([...folders, ...data.folders])];
+        if (data.stats) stats = { ...stats, ...sanitizeImportedStats(data.stats) };
+        if (Array.isArray(data.folders)) folders = [...new Set([...folders, ...data.folders.filter(f => typeof f === 'string' && f.trim())])];
         // 커스텀 접사 복원
-        if (data.userAffixes) {
+        if (data.userAffixes && typeof data.userAffixes === 'object') {
           ['prefixes','roots','suffixes'].forEach(t => {
+            if (!Array.isArray(data.userAffixes[t])) return;
             const existing = new Set((userAffixes[t]||[]).map(x => x.affix));
-            const incoming = (data.userAffixes[t]||[]).filter(x => !existing.has(x.affix));
+            const incoming = data.userAffixes[t].filter(x => x && typeof x.affix === 'string' && x.affix && !existing.has(x.affix));
             userAffixes[t] = [...(userAffixes[t]||[]), ...incoming];
           });
           saveUserAffixes();
