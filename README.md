@@ -175,10 +175,6 @@
 
 변경 내역은 [Releases](https://github.com/linuse765/MedLex/releases)에서 확인할 수 있습니다.
 
-## 문의 · 피드백
-
-불편한 점이나 건의사항은 [Issues](https://github.com/linuse765/MedLex/issues) 또는 이메일(medlexjw@gmail.com)로 남겨주세요.
-
 ## 라이선스
 
 [LICENSE](LICENSE) 파일을 참고해주세요.
