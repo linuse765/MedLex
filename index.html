@@ -929,19 +929,6 @@ body {
 }
 .toggle-switch.on::after { left: 22px; }
 
-/* 파일 저장 상태 표시 */
-.file-status {
-  display: flex; align-items: center; gap: 8px; padding: 10px 14px;
-  background: var(--surface2); border-radius: var(--radius-sm); border: 1.5px solid var(--border);
-  font-size: 12px; color: var(--text2); margin-bottom: 10px;
-}
-.file-status-dot {
-  width: 8px; height: 8px; border-radius: 50%; background: var(--text3); flex-shrink: 0;
-}
-.file-status-dot.connected { background: var(--accent2); }
-.file-status-dot.saving { background: var(--gold); animation: pulse 1s infinite; }
-.file-status-name { font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
-
 /* 단축키 힌트 바 */
 .shortcut-hint-bar {
   position: fixed; bottom: 66px; left: 50%; transform: translateX(-50%);
@@ -1415,6 +1402,21 @@ body {
 .undo-snack .us-btn { border: none; background: transparent; color: #74c69d; font-size: 14px; font-weight: 700; font-family: 'DM Sans', sans-serif; padding: 8px 12px; border-radius: 8px; cursor: pointer; white-space: nowrap; }
 .undo-snack .us-btn:focus-visible { outline: 2px solid #74c69d; outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { .undo-snack { transition: none; } }
+
+/* 설정 창: 높이를 고정해서 탭을 바꿔도 탭 줄 위치가 그대로 */
+.settings-panel { height: min(86vh, 720px); max-height: none; }
+@supports (height: 1dvh) { .settings-panel { height: min(86dvh, 720px); } }
+
+/* 저장소 보호 / 복원 지점 */
+.persist-row { margin-top: 10px; display: flex; align-items: center; gap: 10px; }
+.persist-row[hidden], .persist-row .settings-action-btn[hidden] { display: none; }
+.persist-text { flex: 1; font-size: 12px; line-height: 1.5; color: var(--text2); }
+.restore-note { margin-bottom: 10px; font-size: 12px; line-height: 1.6; color: var(--text2); }
+.restore-empty { padding: 4px 2px 12px; font-size: 12px; line-height: 1.6; color: var(--text2); }
+.restore-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; padding: 10px 12px; background: var(--surface2); border: 1.5px solid var(--border); border-radius: var(--radius-sm); }
+.restore-main { flex: 1; min-width: 0; }
+.restore-title { font-size: 14px; color: var(--text); }
+.restore-sub { margin-top: 2px; font-size: 12px; color: var(--text2); }
 </style>
 </head>
 <body>
@@ -1423,7 +1425,7 @@ body {
   <!-- ── 헤더 ── -->
   <header class="header">
     <div class="header-logo">MedLex <span>V-alpha</span></div>
-    <button class="icon-btn labeled" id="fileStatusBtn" title="파일 저장 상태" aria-label="파일 저장 상태"><span class="icon-glyph"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg></span><span class="icon-label">저장</span></button>
+    <button class="icon-btn labeled" id="fileStatusBtn" title="데이터 백업·복원" aria-label="데이터 백업·복원"><span class="icon-glyph"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg></span><span class="icon-label">백업</span></button>
     <button class="icon-btn labeled" id="settingsBtn" title="설정" aria-label="설정" style="position:relative">
       <span class="icon-glyph"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21v-7"/><path d="M4 10V3"/><path d="M12 21v-9"/><path d="M12 8V3"/><path d="M20 21v-5"/><path d="M20 12V3"/><path d="M1 14h6"/><path d="M9 8h6"/><path d="M17 16h6"/></svg></span><span class="icon-label">설정</span>
       <span class="kbd-badge" id="kbdSettings"></span>
@@ -1988,7 +1990,6 @@ body {
       <div class="settings-tabs">
         <button class="settings-tab active" data-tab="shortcuts">단축키</button>
         <button class="settings-tab" data-tab="prefs">환경설정</button>
-        <button class="settings-tab" data-tab="storage">저장소</button>
         <button class="settings-tab" data-tab="actions">데이터</button>
       </div>
       <div class="settings-body">
@@ -2051,67 +2052,58 @@ body {
           </div>
         </div>
 
-        <!-- 저장소 탭 (새로 추가) -->
-        <div class="settings-tab-content" id="tab-storage">
-          <div class="pref-section">
-            <div class="pref-section-title">파일 시스템 저장소</div>
-            <div class="file-status" id="fileStatusDisplay">
-              <div class="file-status-dot" id="fileStatusDot"></div>
-              <div class="file-status-name" id="fileStatusName">연결된 파일 없음</div>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:8px">
-              <button class="settings-action-btn" style="width:100%;padding:12px;font-size:13px" onclick="connectJsonFile()">
-                JSON 파일 연결 (기존 데이터 불러오기)
-              </button>
-              <button class="settings-action-btn" style="width:100%;padding:12px;font-size:13px" onclick="createNewJsonFile()">
-                새 JSON 파일 생성
-              </button>
-              <button class="settings-action-btn" style="width:100%;padding:12px;font-size:13px" id="saveToFileBtn" onclick="saveToFile()" disabled>
-                지금 파일에 저장
-              </button>
-            </div>
-            <div style="margin-top:14px;padding:10px 14px;background:var(--surface2);border-radius:var(--radius-sm);border:1.5px solid var(--border);font-size:12px;color:var(--text3);line-height:1.7">
-              <b>파일 연결 방법:</b> "JSON 파일 연결"을 눌러 <code>medlex_data.json</code>을 선택하면 데이터가 자동으로 로드됩니다. 단어를 추가/수정할 때마다 LocalStorage와 JSON 파일에 이중 저장됩니다.
-            </div>
-            <div style="margin-top:8px;padding:10px 14px;background:var(--accent-light);border-radius:var(--radius-sm);border:1.5px solid var(--accent2);font-size:12px;color:var(--accent);line-height:1.7">
-              자동 백업: 단어가 <b>3개 추가</b>될 때마다 JSON 파일이 자동으로 업데이트됩니다.
-            </div>
-          </div>
+        <!-- 데이터 탭 (저장 현황 + 백업 파일 연결 + 내보내기/가져오기) -->
+        <div class="settings-tab-content" id="tab-actions">
           <div class="pref-section">
             <div class="pref-section-title">저장 현황</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
               <div style="padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border:1.5px solid var(--border);text-align:center">
                 <div style="font-size:20px;font-weight:700;color:var(--accent)" id="storageWordCount">0</div>
-                <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px">저장된 단어</div>
+                <div style="font-size:11px;color:var(--text2);margin-top:2px">저장된 단어</div>
               </div>
               <div style="padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border:1.5px solid var(--border);text-align:center">
-                <div style="font-size:20px;font-weight:700;color:var(--gold)" id="storageLastSave">—</div>
-                <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px">마지막 저장</div>
+                <div style="font-size:20px;font-weight:700;color:var(--gold)" id="storageLastExport">없음</div>
+                <div style="font-size:11px;color:var(--text2);margin-top:2px">마지막 내보내기</div>
+              </div>
+            </div>
+            <div class="persist-row" id="persistRow">
+              <div class="persist-text" id="persistText">저장소 보호 상태를 확인하는 중…</div>
+              <button class="settings-action-btn" id="persistBtn" hidden>보호 요청</button>
+            </div>
+          </div>
+          <div class="pref-section" id="backupSection">
+            <div class="pref-section-title">백업 · 복원</div>
+            <div style="margin-bottom:10px;font-size:12px;color:var(--text2);line-height:1.6">브라우저 데이터를 지우거나 기기를 바꾸기 전에 내보내기로 백업해 두세요. 가져오기는 기존 데이터에 병합돼요.</div>
+            <div class="settings-action-list">
+              <div class="settings-action-row">
+                <div class="settings-action-label">
+                  <div><div>데이터 내보내기</div><div style="font-size:11px;color:var(--text3)">JSON 파일로 백업</div></div>
+                </div>
+                <button class="settings-action-btn" onclick="exportData()">내보내기</button>
+              </div>
+              <div class="settings-action-row">
+                <div class="settings-action-label">
+                  <div><div>데이터 가져오기</div><div style="font-size:11px;color:var(--text3)">JSON 파일에서 불러오기</div></div>
+                </div>
+                <button class="settings-action-btn" onclick="document.getElementById('fileInput').click()">가져오기</button>
               </div>
             </div>
           </div>
-        </div>
-
-        <!-- 데이터 탭 -->
-        <div class="settings-tab-content" id="tab-actions">
-          <div class="settings-action-list">
-            <div class="settings-action-row">
-              <div class="settings-action-label">
-                <div><div>데이터 내보내기</div><div style="font-size:11px;color:var(--text3)">JSON 파일로 백업</div></div>
+          <div class="pref-section" id="restoreSection">
+            <div class="pref-section-title">복원 지점</div>
+            <div class="restore-note">앱을 열 때 하루에 한 번(데이터가 바뀐 경우), 가져오기·전체 삭제·복원 직전에 자동으로 만들어져요. 최근 10개까지 보관해요. 사이트 데이터를 직접 지우면 함께 사라지니, 중요한 데이터는 내보내기로도 백업해 두세요.</div>
+            <div id="restoreList"></div>
+            <button class="settings-action-btn" style="width:100%;padding:12px;font-size:13px" id="makeSnapshotBtn">지금 복원 지점 만들기</button>
+          </div>
+          <div class="pref-section">
+            <div class="pref-section-title">초기화</div>
+            <div class="settings-action-list">
+              <div class="settings-action-row">
+                <div class="settings-action-label">
+                  <div><div>전체 데이터 삭제</div><div style="font-size:11px;color:var(--text3)">모든 단어와 통계 초기화</div></div>
+                </div>
+                <button class="settings-action-btn" style="color:var(--danger);border-color:var(--danger)" onclick="clearAllData()">초기화</button>
               </div>
-              <button class="settings-action-btn" onclick="exportData()">내보내기</button>
-            </div>
-            <div class="settings-action-row">
-              <div class="settings-action-label">
-                <div><div>데이터 가져오기</div><div style="font-size:11px;color:var(--text3)">JSON 파일에서 불러오기</div></div>
-              </div>
-              <button class="settings-action-btn" onclick="document.getElementById('fileInput').click()">가져오기</button>
-            </div>
-            <div class="settings-action-row">
-              <div class="settings-action-label">
-                <div><div>전체 데이터 삭제</div><div style="font-size:11px;color:var(--text3)">모든 단어와 통계 초기화</div></div>
-              </div>
-              <button class="settings-action-btn" style="color:var(--danger);border-color:var(--danger)" onclick="clearAllData()">초기화</button>
             </div>
           </div>
         </div>
@@ -2766,8 +2758,6 @@ let lastWrongWords = [];
 let questionStartTime = 0;
 
 // 파일 시스템 API 상태
-let fileHandle = null;       // File System Access API 핸들
-let wordsAddedSinceBackup = 0; // 마지막 백업 이후 추가된 단어 수
 
 // ═══════════════════════════════════════════════════════════════
 // ── BKT / HALO 알고리즘 상수
@@ -3021,105 +3011,19 @@ function recordDailyKnowledgeDelta(before) {
 let quizStartKnowledge = 0;
 
 // ═══════════════════════════════════════════════════════════════
-// ── 파일 시스템 API 엔진 (File System Access API)
-//    브라우저에서 로컬 JSON 파일을 직접 읽고 쓰는 기능
+// ── 데이터 백업/복원 헬퍼 (내보내기·가져오기)
 // ═══════════════════════════════════════════════════════════════
 
-// JSON 파일 연결 (기존 파일 열기)
-async function connectJsonFile() {
-  if (!('showOpenFilePicker' in window)) {
-    showToast('이 브라우저는 파일 시스템 API를 지원하지 않아요. Chrome/Edge를 사용해주세요.');
-    return;
-  }
-  try {
-    const [handle] = await window.showOpenFilePicker({
-      types: [{ description: 'MedLex Data', accept: { 'application/json': ['.json'] } }]
-    });
-    fileHandle = handle;
-    localStorage.setItem('medlex_file_name', handle.name);
-
-    // 파일 내용 읽기
-    const file = await handle.getFile();
-    const text = await file.text();
-    const data = JSON.parse(text);
-
-    if (Array.isArray(data.words)) {
-      // BUGFIX: 유효하지 않은 항목(term/meaning 누락 등)은 걸러내고 개수 안내
-      const validWords = data.words.filter(isValidImportedWord);
-      const skipped = data.words.length - validWords.length;
-      const skipNote = skipped > 0 ? `\n(형식이 올바르지 않은 ${skipped}개는 제외됩니다)` : '';
-      showConfirm(`파일에서 ${validWords.length}개의 단어를 발견했습니다. 불러올까요?\n(기존 데이터는 병합됩니다)${skipNote}`, () => {
-        const existingIds = new Set(words.map(w => w.id));
-        const newWords = validWords.filter(w => { if (existingIds.has(w.id)) return false; existingIds.add(w.id); return true; }).map(initWordAlgo);
-        words = [...words, ...newWords];
-        if (data.stats) stats = { ...stats, ...sanitizeImportedStats(data.stats) };
-        if (Array.isArray(data.folders)) folders = [...new Set([...folders, ...data.folders.filter(f => typeof f === 'string' && f.trim())])];
-        save();
-        renderWordList();
-        renderFolderSelects();
-        showToast(`${newWords.length}개 단어 불러오기 완료!`);
-      }, { title: '파일 연결', okLabel: '불러오기', danger: false });
-    }
-    updateFileStatusUI();
-    showToast(`${handle.name} 연결됨`);
-  } catch (e) {
-    if (e.name !== 'AbortError') showToast('파일을 열 수 없어요');
-  }
-}
-
-// 새 JSON 파일 생성
-async function createNewJsonFile() {
-  if (!('showSaveFilePicker' in window)) {
-    showToast('이 브라우저는 파일 시스템 API를 지원하지 않아요.');
-    return;
-  }
-  try {
-    const handle = await window.showSaveFilePicker({
-      suggestedName: 'medlex_data.json',
-      types: [{ description: 'MedLex Data', accept: { 'application/json': ['.json'] } }]
-    });
-    fileHandle = handle;
-    localStorage.setItem('medlex_file_name', handle.name);
-    await writeToFile(handle);
-    updateFileStatusUI();
-    showToast(`${handle.name} 생성됨`);
-  } catch (e) {
-    if (e.name !== 'AbortError') showToast('파일 생성 실패');
-  }
-}
-
-// 파일에 데이터 쓰기 (내부 함수)
-async function writeToFile(handle) {
-  if (!handle) return false;
-  try {
-    const writable = await handle.createWritable();
-    const data = buildExportData();
-    await writable.write(JSON.stringify(data, null, 2));
-    await writable.close();
-    localStorage.setItem('medlex_last_file_save', new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }));
-    updateFileStatusUI();
-    return true;
-  } catch (e) {
-    console.warn('파일 저장 실패:', e);
-    return false;
-  }
-}
-
-// 파일에 저장 (버튼 클릭용)
-async function saveToFile() {
-  if (!fileHandle) { showToast('먼저 파일을 연결해주세요'); return; }
-  const ok = await writeToFile(fileHandle);
-  if (ok) showToast('파일 저장 완료!');
-}
-
-// 자동 백업 체크 (단어 3개마다 파일 저장)
-async function checkAutoBackup() {
-  wordsAddedSinceBackup++;
-  if (wordsAddedSinceBackup >= 3 && fileHandle) {
-    wordsAddedSinceBackup = 0;
-    await writeToFile(fileHandle);
-    showToast('자동 백업 완료');
-  }
+// 가져온 데이터의 사용자 접사를 기존 접사에 병합
+function mergeImportedUserAffixes(data) {
+  if (!data || !data.userAffixes || typeof data.userAffixes !== 'object') return;
+  ['prefixes', 'roots', 'suffixes'].forEach(t => {
+    if (!Array.isArray(data.userAffixes[t])) return;
+    const existing = new Set((userAffixes[t] || []).map(x => x.affix));
+    const incoming = data.userAffixes[t].filter(x => x && typeof x.affix === 'string' && x.affix && !existing.has(x.affix));
+    userAffixes[t] = [...(userAffixes[t] || []), ...incoming];
+  });
+  saveUserAffixes();
 }
 
 // 내보내기용 데이터 빌드
@@ -3134,37 +3038,20 @@ function buildExportData() {
   };
 }
 
-// 파일 상태 UI 업데이트
+// 저장 현황(단어 수, 마지막 내보내기) 갱신
 function updateFileStatusUI() {
-  const dot = document.getElementById('fileStatusDot');
-  const name = document.getElementById('fileStatusName');
-  const savedName = localStorage.getItem('medlex_file_name');
-  const lastSave = localStorage.getItem('medlex_last_file_save');
-  const saveBtn = document.getElementById('saveToFileBtn');
-
-  if (fileHandle) {
-    dot.className = 'file-status-dot connected';
-    name.textContent = fileHandle.name;
-    if (saveBtn) saveBtn.disabled = false;
-  } else if (savedName) {
-    dot.className = 'file-status-dot';
-    name.textContent = savedName + ' (재연결 필요)';
-    if (saveBtn) saveBtn.disabled = true;
-  } else {
-    dot.className = 'file-status-dot';
-    name.textContent = '연결된 파일 없음';
-    if (saveBtn) saveBtn.disabled = true;
-  }
-
-  // 저장 통계 UI
   const wc = document.getElementById('storageWordCount');
-  const ls = document.getElementById('storageLastSave');
+  const le = document.getElementById('storageLastExport');
   if (wc) wc.textContent = words.length;
-  if (ls) ls.textContent = lastSave || '—';
-
-  // 헤더 파일 버튼
-  const fBtn = document.getElementById('fileStatusBtn');
-  if (fBtn) fBtn.title = fileHandle ? `연결됨: ${fileHandle.name}` : '파일 미연결';
+  if (le) {
+    let t = NaN;
+    try { t = parseInt(localStorage.getItem('medlex_last_export') || '', 10); } catch (e) {}
+    if (!isFinite(t)) le.textContent = '없음';
+    else {
+      const days = Math.floor((Date.now() - t) / 86400000);
+      le.textContent = days <= 0 ? '오늘' : days + '일 전';
+    }
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -4049,7 +3936,6 @@ async function _doSaveWord(term, meaning, pron, folderId) {
     details: collectDetails()
   });
   words.push(nw);
-  await checkAutoBackup();
   showToast('추가됐어요 ✓');
   save(); _lastRenderKey = ''; closeModal(); renderWordList();
   updateFileStatusUI();
@@ -5305,15 +5191,20 @@ function initAnalyzeTabs() {
 // ═══════════════════════════════════════════════════════════════
 // ── 내보내기 / 가져오기
 // ═══════════════════════════════════════════════════════════════
-// CODE-03: 내보내기 파일명에 날짜 포함 (medlex_backup_YYYYMMDD.json)
-// 구현은 했는데 왜 작동이 안되는거지 ㅠㅠ
+// 내보내기 파일명에 날짜 포함 (medlex_backup_YYYYMMDD.json)
+// 날짜는 UTC가 아니라 기기의 현지 날짜 기준 (한국에서 오전 0~9시에 전날 날짜로 찍히던 문제 수정)
 function exportData() {
   const data = buildExportData();
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
-  const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-  const a = document.createElement('a'); a.href = url; a.download = `medlex_backup_${dateStr}.json`; a.click();
-  URL.revokeObjectURL(url);
+  const d = new Date();
+  const dateStr = d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
+  const a = document.createElement('a');
+  a.href = url; a.download = `medlex_backup_${dateStr}.json`; a.style.display = 'none';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10000);  // 바로 해제하면 일부 브라우저에서 다운로드가 끊김
+  try { localStorage.setItem('medlex_last_export', String(Date.now())); } catch (e) {}
+  updateFileStatusUI();
   showToast('내보내기 완료');
 }
 
@@ -5329,21 +5220,14 @@ function importData(file) {
       const skipped = data.words.length - validWords.length;
       const skipNote = skipped > 0 ? ` (형식이 올바르지 않은 ${skipped}개는 제외)` : '';
       showConfirm(`${validWords.length}개의 단어를 가져올까요? 기존 데이터는 유지됩니다.${skipNote}`, () => {
+        if (window.takeSnapshot) takeSnapshot('import');  // 가져오기 직전 복원 지점
         const existingIds = new Set(words.map(w => w.id));
         const newWords = validWords.filter(w => { if (existingIds.has(w.id)) return false; existingIds.add(w.id); return true; }).map(initWordAlgo);
         words = [...words, ...newWords];
         if (data.stats) stats = { ...stats, ...sanitizeImportedStats(data.stats) };
         if (Array.isArray(data.folders)) folders = [...new Set([...folders, ...data.folders.filter(f => typeof f === 'string' && f.trim())])];
         // 커스텀 접사 복원
-        if (data.userAffixes && typeof data.userAffixes === 'object') {
-          ['prefixes','roots','suffixes'].forEach(t => {
-            if (!Array.isArray(data.userAffixes[t])) return;
-            const existing = new Set((userAffixes[t]||[]).map(x => x.affix));
-            const incoming = data.userAffixes[t].filter(x => x && typeof x.affix === 'string' && x.affix && !existing.has(x.affix));
-            userAffixes[t] = [...(userAffixes[t]||[]), ...incoming];
-          });
-          saveUserAffixes();
-        }
+        mergeImportedUserAffixes(data);
         affixCache.clear(); _lastRenderKey = ''; _analyzeCache.key = '';
         saveAll(); renderWordList(); renderFolderSelects();
         showToast(`${newWords.length}개 단어 가져오기 완료`);
@@ -5355,7 +5239,8 @@ function importData(file) {
 
 // 전체 데이터 초기화 — UX-01: confirm → showConfirm
 function clearAllData() {
-  showConfirm('모든 데이터를 삭제할까요? 이 작업은 되돌릴 수 없습니다.', () => {
+  showConfirm('모든 데이터를 삭제할까요? 삭제 직전 상태는 복원 지점으로 자동 보관돼요.', () => {
+    if (window.takeSnapshot) takeSnapshot('clear');  // 전체 삭제 직전 복원 지점
     words = []; stats = { sessions: 0, totalQ: 0, totalCorrect: 0, errors: {}, dailyKnowledge: [] };
     folders = [];
     affixCache.clear(); _lastRenderKey = '';
@@ -5384,7 +5269,8 @@ document.querySelectorAll('.settings-tab').forEach(tab => {
     document.querySelectorAll('.settings-tab-content').forEach(c => c.classList.remove('active'));
     tab.classList.add('active');
     document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
-    if (tab.dataset.tab === 'storage') updateFileStatusUI();
+    document.querySelector('.settings-body').scrollTop = 0;
+    if (tab.dataset.tab === 'actions') updateFileStatusUI();
   });
 });
 
@@ -5580,14 +5466,9 @@ document.addEventListener('keydown', function(e) {
 document.getElementById('settingsBtn').addEventListener('click', openSettings);
 document.getElementById('fileStatusBtn').addEventListener('click', () => {
   openSettings();
-  // 저장소 탭으로 이동
-  setTimeout(() => {
-    document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.settings-tab-content').forEach(c => c.classList.remove('active'));
-    document.querySelector('[data-tab="storage"]').classList.add('active');
-    document.getElementById('tab-storage').classList.add('active');
-    updateFileStatusUI();
-  }, 50);
+  // 데이터 탭의 백업·복원 영역으로 이동
+  document.querySelector('.settings-tab[data-tab="actions"]').click();
+  setTimeout(() => { const sec = document.getElementById('backupSection'); if (sec) sec.scrollIntoView({ block: 'start' }); }, 60);
 });
 
 // 설정 모달
@@ -6327,7 +6208,6 @@ document.addEventListener('visibilitychange', () => {
       });
       words.push(nw); ids.push(nw.id);
     });
-    try { await checkAutoBackup(); } catch (e) {}
     save(); _lastRenderKey = ''; closeBulk(); renderWordList(); updateFileStatusUI();
     showUndo(ids.length + '개 추가됐어요', () => {
       words = words.filter(w => !ids.includes(w.id));
@@ -6339,6 +6219,230 @@ document.addEventListener('visibilitychange', () => {
   // 수정 모드에서는 일괄 추가 링크 숨김
   const _om = openModal;
   openModal = function () { const r = _om.apply(this, arguments); $('openBulkBtn').hidden = !!editId; return r; };
+})();
+</script>
+
+<script>
+// ── 저장소 보호: IndexedDB 사본 + 복원 지점 ──
+// localStorage는 그대로 주 저장소. 저장할 때마다 IndexedDB에 사본을 두고,
+// localStorage가 비었거나 깨졌을 때만 사본에서 복구한다. 이 기능이 실패해도 앱은 평소처럼 동작한다.
+(function () {
+  const DB_NAME = 'medlex_guard', MAX_SNAPS = 10, MIRROR_DELAY = 900;
+  const REASONS = { daily: '자동 · 하루 1회', manual: '직접 만듦', import: '가져오기 직전', clear: '전체 삭제 직전', restore: '복원 직전' };
+  let dbp = null, usable = true, recoveryDone = false, mirrorTimer = null, uiTimer = null;
+
+  // ── IndexedDB 헬퍼 ──
+  function openDb() {
+    if (dbp) return dbp;
+    dbp = new Promise((resolve, reject) => {
+      try {
+        if (!window.indexedDB) return reject(new Error('no indexedDB'));
+        const r = indexedDB.open(DB_NAME, 1);
+        r.onupgradeneeded = () => {
+          const db = r.result;
+          if (!db.objectStoreNames.contains('kv')) db.createObjectStore('kv');
+          if (!db.objectStoreNames.contains('snaps')) db.createObjectStore('snaps', { keyPath: 'id' });
+        };
+        r.onsuccess = () => resolve(r.result);
+        r.onerror = () => reject(r.error || new Error('open failed'));
+        r.onblocked = () => reject(new Error('blocked'));
+      } catch (e) { reject(e); }
+    });
+    dbp.catch(() => { usable = false; });
+    return dbp;
+  }
+  function run(store, mode, fn) {
+    return openDb().then(db => new Promise((resolve, reject) => {
+      let req;
+      try {
+        const t = db.transaction(store, mode);
+        req = fn(t.objectStore(store));
+        t.oncomplete = () => resolve(req ? req.result : undefined);
+        t.onerror = () => reject(t.error);
+        t.onabort = () => reject(t.error || new Error('aborted'));
+      } catch (e) { reject(e); }
+    }));
+  }
+  const idbGet = (st, k) => run(st, 'readonly', s => s.get(k));
+  const idbAll = st => run(st, 'readonly', s => s.getAll());
+  const idbPut = (st, v, k) => run(st, 'readwrite', s => (k === undefined ? s.put(v) : s.put(v, k)));
+  const idbDel = (st, k) => run(st, 'readwrite', s => s.delete(k));
+
+  // ── 스냅샷 데이터 ──
+  function capture() {
+    const str = JSON.stringify({ words, stats, folders, userAffixes, detailChips });
+    return { str, data: JSON.parse(str) };
+  }
+  function hash(str) { let h = 5381; for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) | 0; return h + ':' + str.length; }
+  function dayKey(ts) { const d = new Date(ts); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+
+  // ── 사본(미러) ──
+  function scheduleMirror() {
+    if (!recoveryDone || !usable) return;
+    clearTimeout(mirrorTimer);
+    mirrorTimer = setTimeout(writeMirror, MIRROR_DELAY);
+  }
+  function writeMirror() {
+    clearTimeout(mirrorTimer);
+    if (!recoveryDone || !usable) return Promise.resolve();
+    const c = capture();
+    return idbPut('kv', { savedAt: Date.now(), hash: hash(c.str), data: c.data }, 'mirror').then(maybeRequestPersist).catch(() => {});
+  }
+  ['saveWords', 'saveStats', 'savePrefs', 'saveAll', 'saveUserAffixes'].forEach(name => {
+    const orig = window[name];
+    if (typeof orig !== 'function') return;
+    window[name] = function () { const r = orig.apply(this, arguments); scheduleMirror(); return r; };
+  });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') writeMirror(); });
+  window.addEventListener('pagehide', () => { writeMirror(); });
+
+  // ── 복원 지점 ──
+  // 반환: 'ok' | 'same'(직전과 동일) | 'empty'(저장할 단어 없음) | 'error'
+  window.takeSnapshot = function (reason, opts) {
+    if (!usable) return Promise.resolve('error');
+    const c = capture();
+    if (!c.data.words.length) return Promise.resolve('empty');
+    const h = hash(c.str);
+    return idbAll('snaps').then(list => {
+      list.sort((a, b) => b.id - a.id);
+      if (list[0] && list[0].hash === h) return 'same';
+      let id = Date.now(); while (list.some(x => x.id === id)) id++;
+      const snap = { id, reason, hash: h, count: c.data.words.length, data: c.data };
+      return idbPut('snaps', snap).then(() => {
+        const extra = [snap, ...list].sort((a, b) => b.id - a.id).slice(MAX_SNAPS);
+        return Promise.all(extra.map(x => idbDel('snaps', x.id)));
+      }).then(() => 'ok');
+    }).then(r => { refreshUI(); return r; }).catch(() => 'error');
+  };
+  function dailyCheck() {
+    if (!usable) return;
+    idbAll('snaps').then(list => {
+      const today = dayKey(Date.now());
+      if (list.some(x => x.reason === 'daily' && dayKey(x.id) === today)) return;
+      return window.takeSnapshot('daily');
+    }).catch(() => {});
+  }
+
+  // ── 시작 시 복구: localStorage가 비었거나 깨졌을 때만 ──
+  function needsRecovery() {
+    let raw = null;
+    try { raw = localStorage.getItem('medlex_words'); } catch (e) { return false; }
+    if (raw === null) return true;
+    try { return !Array.isArray(JSON.parse(raw)); } catch (e) { return true; }
+  }
+  function recover() {
+    return idbGet('kv', 'mirror').then(m => {
+      const d = m && m.data;
+      if (!d || !Array.isArray(d.words) || !d.words.length) return 0;
+      const ids = new Set(words.map(w => w.id));
+      const add = d.words.filter(w => isValidImportedWord(w) && !ids.has(w.id)).map(initWordAlgo);
+      if (!add.length) return 0;
+      words = [...words, ...add];
+      if (!stats.totalQ && d.stats) stats = { ...stats, ...sanitizeImportedStats(d.stats) };
+      if (Array.isArray(d.folders)) folders = [...new Set([...folders, ...d.folders.filter(f => typeof f === 'string' && f.trim())])];
+      if (Array.isArray(d.detailChips)) detailChips = [...new Set([...detailChips, ...d.detailChips.filter(x => typeof x === 'string')])];
+      mergeImportedUserAffixes(d);
+      affixCache.clear(); _lastRenderKey = ''; _analyzeCache.key = '';
+      saveAll(); renderWordList(); renderFolderSelects(); updateFileStatusUI();
+      return add.length;
+    }).catch(() => 0);
+  }
+  const startNeedsRecovery = needsRecovery();
+  (startNeedsRecovery ? recover() : Promise.resolve(0)).then(n => {
+    recoveryDone = true;
+    if (n > 0) showToast('저장소가 비어 있어서 백업 사본에서 ' + n + '개 단어를 복구했어요');
+    writeMirror();
+    dailyCheck();
+  });
+
+  // ── 복원 ──
+  function restoreFrom(snap) {
+    window.takeSnapshot('restore').then(() => {
+      const d = snap.data || {};
+      words = (d.words || []).filter(isValidImportedWord).map(initWordAlgo);
+      stats = { sessions: 0, totalQ: 0, totalCorrect: 0, errors: {}, dailyKnowledge: [], ...sanitizeImportedStats(d.stats) };
+      folders = (d.folders || []).filter(f => typeof f === 'string' && f.trim());
+      if (Array.isArray(d.detailChips)) detailChips = d.detailChips.filter(x => typeof x === 'string');
+      userAffixes = { prefixes: [], roots: [], suffixes: [] };
+      mergeImportedUserAffixes(d);
+      if (window.clearQuizSession) clearQuizSession();
+      affixCache.clear(); _lastRenderKey = ''; _analyzeCache.key = '';
+      saveAll(); renderWordList(); renderFolderSelects(); updateFileStatusUI();
+      showToast('복원했어요 · 단어 ' + words.length + '개');
+    });
+  }
+  function fmt(ts) {
+    const d = new Date(ts), now = new Date();
+    const t = d.toLocaleTimeString('ko-KR', { hour: 'numeric', minute: '2-digit' });
+    if (dayKey(ts) === dayKey(now.getTime())) return '오늘 ' + t;
+    return (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + t;
+  }
+
+  // ── 화면 ──
+  function renderRestoreList() {
+    const box = document.getElementById('restoreList'); if (!box) return;
+    const btn = document.getElementById('makeSnapshotBtn');
+    const empty = text => { box.textContent = ''; const e = document.createElement('div'); e.className = 'restore-empty'; e.textContent = text; box.appendChild(e); };
+    if (!usable) { empty('이 환경에서는 복원 지점을 만들 수 없어요. (브라우저 저장소 제한) 내보내기로 백업해 주세요.'); if (btn) btn.disabled = true; return; }
+    if (btn) btn.disabled = false;
+    idbAll('snaps').then(list => {
+      list.sort((a, b) => b.id - a.id);
+      if (!list.length) { empty('아직 복원 지점이 없어요.'); return; }
+      box.textContent = '';
+      list.forEach(snap => {
+        const row = document.createElement('div'); row.className = 'restore-row';
+        const main = document.createElement('div'); main.className = 'restore-main';
+        const t = document.createElement('div'); t.className = 'restore-title'; t.textContent = fmt(snap.id);
+        const sub = document.createElement('div'); sub.className = 'restore-sub'; sub.textContent = (REASONS[snap.reason] || '복원 지점') + ' · 단어 ' + snap.count + '개';
+        main.appendChild(t); main.appendChild(sub);
+        const b = document.createElement('button'); b.className = 'settings-action-btn'; b.type = 'button'; b.textContent = '복원';
+        b.addEventListener('click', () => showConfirm(
+          fmt(snap.id) + ' 시점(단어 ' + snap.count + '개)으로 복원할까요? 지금 데이터는 \'복원 직전\' 지점으로 자동 보관돼요.',
+          () => restoreFrom(snap), { title: '복원', okLabel: '복원', danger: false }));
+        row.appendChild(main); row.appendChild(b); box.appendChild(row);
+      });
+    }).catch(() => empty('복원 지점을 불러오지 못했어요.'));
+  }
+  function renderPersist() {
+    const text = document.getElementById('persistText'), btn = document.getElementById('persistBtn');
+    if (!text || !btn) return;
+    if (!navigator.storage || !navigator.storage.persisted) { text.textContent = '이 브라우저는 저장소 보호를 지원하지 않아요.'; btn.hidden = true; return; }
+    navigator.storage.persisted().then(p => {
+      text.textContent = p ? '저장소 보호: 켜짐 · 공간이 부족해도 브라우저가 데이터를 함부로 지우지 않아요.' : '저장소 보호: 꺼짐 · 공간이 부족하면 브라우저가 데이터를 지울 수 있어요.';
+      btn.hidden = !!p;
+    }).catch(() => { text.textContent = ''; btn.hidden = true; });
+  }
+  function refreshUI() {
+    clearTimeout(uiTimer);
+    uiTimer = setTimeout(() => { const sec = document.getElementById('restoreSection'); if (sec && sec.offsetParent !== null) { renderRestoreList(); renderPersist(); } }, 250);
+  }
+  const _u = window.updateFileStatusUI;
+  window.updateFileStatusUI = function () { const r = _u.apply(this, arguments); refreshUI(); return r; };
+
+  function maybeRequestPersist() {
+    try {
+      if (!navigator.storage || !navigator.storage.persist || !navigator.storage.persisted) return;
+      const last = parseInt(localStorage.getItem('medlex_persist_asked') || '0', 10);
+      if (Date.now() - last < 7 * 86400000) return;
+      navigator.storage.persisted().then(p => {
+        if (p) return;
+        localStorage.setItem('medlex_persist_asked', String(Date.now()));
+        return navigator.storage.persist().then(refreshUI);
+      }).catch(() => {});
+    } catch (e) {}
+  }
+  document.getElementById('persistBtn').addEventListener('click', () => {
+    navigator.storage.persist().then(ok => {
+      showToast(ok ? '저장소 보호를 켰어요' : '브라우저가 허용하지 않았어요. 홈 화면에 추가해서 쓰면 허용되는 경우가 많아요');
+      renderPersist();
+    }).catch(() => showToast('저장소 보호를 요청할 수 없어요'));
+  });
+  document.getElementById('makeSnapshotBtn').addEventListener('click', () => {
+    window.takeSnapshot('manual').then(r => {
+      showToast(r === 'ok' ? '복원 지점을 만들었어요' : r === 'same' ? '이미 같은 상태의 복원 지점이 있어요' : r === 'empty' ? '저장할 단어가 없어요' : '복원 지점을 만들 수 없어요');
+      renderRestoreList();
+    });
+  });
 })();
 </script>
 </body>
