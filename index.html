@@ -5193,19 +5193,38 @@ function initAnalyzeTabs() {
 // ═══════════════════════════════════════════════════════════════
 // 내보내기 파일명에 날짜 포함 (medlex_backup_YYYYMMDD.json)
 // 날짜는 UTC가 아니라 기기의 현지 날짜 기준 (한국에서 오전 0~9시에 전날 날짜로 찍히던 문제 수정)
-function exportData() {
+async function exportData() {
   const data = buildExportData();
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
+  const json = JSON.stringify(data, null, 2);
   const d = new Date();
   const dateStr = d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
+  const fileName = `medlex_backup_${dateStr}.json`;
+  const markDone = () => {
+    try { localStorage.setItem('medlex_last_export', String(Date.now())); } catch (e) {}
+    updateFileStatusUI();
+    showToast('내보내기 완료');
+  };
+  // 안드로이드 앱(Capacitor): a.download가 동작하지 않으므로 파일로 쓴 뒤 공유 창으로 저장
+  const cap = window.Capacitor, P = cap && cap.Plugins;
+  if (cap && cap.isNativePlatform && cap.isNativePlatform()) {
+    if (!(P && P.Filesystem && P.Share)) { showToast('앱에 저장 기능이 포함되지 않았어요'); return; }
+    try {
+      const res = await P.Filesystem.writeFile({ path: fileName, data: json, directory: 'CACHE', encoding: 'utf8' });
+      await P.Share.share({ title: '의학용어 사전 백업', url: res.uri, dialogTitle: '백업 파일 저장' });
+      markDone();
+    } catch (e) {
+      const msg = String((e && e.message) || e);
+      if (!/cancel/i.test(msg)) showToast('내보내기 실패: ' + msg);
+    }
+    return;
+  }
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = `medlex_backup_${dateStr}.json`; a.style.display = 'none';
+  a.href = url; a.download = fileName; a.style.display = 'none';
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 10000);  // 바로 해제하면 일부 브라우저에서 다운로드가 끊김
-  try { localStorage.setItem('medlex_last_export', String(Date.now())); } catch (e) {}
-  updateFileStatusUI();
-  showToast('내보내기 완료');
+  markDone();
 }
 
 // 가져오기 — UX-01: confirm → showConfirm
