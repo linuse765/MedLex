@@ -6463,6 +6463,44 @@ document.addEventListener('visibilitychange', () => {
     });
   });
 })();
+
+// ═══ 안드로이드 뒤로가기 버튼: 앱이 바로 꺼지지 않고 창 닫기 → 이전 화면 → 홈 순서로 이동 ═══
+(function () {
+  const cap = window.Capacitor, App = cap && cap.Plugins && cap.Plugins.App;
+  if (!(cap && cap.isNativePlatform && cap.isNativePlatform() && App)) return;
+  let lastBack = 0;
+  const el = id => document.getElementById(id);
+  const isOpen = id => { const e = el(id); return !!(e && e.classList.contains('open')); };
+  const dismiss = id => () => el(id).classList.remove('open');
+  const layers = [
+    ['confirmOverlay', dismiss('confirmOverlay')],
+    ['algoInfoOverlay', () => closeAlgoInfo()],
+    ['bulkModal', dismiss('bulkModal')],
+    ['assignModal', dismiss('assignModal')],
+    ['settingsOverlay', () => closeSettings()],
+    ['folderModal', () => closeFolderModal()],
+    ['wordModal', () => closeModal()]
+  ];
+  App.addListener('backButton', () => {
+    for (const [id, close] of layers) { if (isOpen(id)) { close(); return; } }
+    const menu = document.querySelector('.card-menu.open');
+    if (menu) { menu.classList.remove('open'); return; }
+    const active = document.querySelector('.screen.active');
+    const scr = active && active.id;
+    if (scr === 'quizScreen') {
+      showConfirm('학습을 그만할까요? 지금까지 푼 문제는 결과로 정리돼요.', () => {
+        if (quizResults.length > 0) endQuiz(); else showScreen('studySetupScreen');
+      }, { title: '학습 종료', okLabel: '그만하기', danger: true });
+      return;
+    }
+    if (scr === 'memoScreen') { showScreen('studySetupScreen'); return; }
+    if (scr && scr !== 'homeScreen') { showScreen('homeScreen'); return; }
+    const now = Date.now();
+    if (now - lastBack < 2000) { App.exitApp(); return; }
+    lastBack = now;
+    showToast('한 번 더 누르면 앱이 종료돼요');
+  });
+})();
 </script>
 </body>
 </html>
