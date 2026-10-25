@@ -27,6 +27,8 @@ jobs:
 
       - run: npm install
       - run: npx cap add android
+      - name: Generate app icons
+        run: npx @capacitor/assets@3 generate --android
       - run: npx cap sync android
 
       - name: Build debug APK
